@@ -1,0 +1,11 @@
+#display errs to user
+ php_flag display_startup_errors on
+ php_flag display_errors on
+ php_flag html_errors on
+ php_flag log_errors off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteRule  ^$ testapp/webroot/    [L]
+    RewriteRule  (.*) testapp/webroot/$1 [L]
+</IfModule>

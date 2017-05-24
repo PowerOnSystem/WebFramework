@@ -1,0 +1,30 @@
+{
+    "name": "poweronsystem/webframework",
+    "type": "library",
+    "description": "Framework for web design.",
+    "keywords": ["framework", "web design", "web utilities"],
+    "homepage": "https://github.com/poweronsystem/webframework",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Lucas Sosa",
+            "email": "sosalucas87@gmail.com",
+            "homepage": "http://www.poweronsistemas.com.ar",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "mobiledetect/mobiledetectlib": "^2.8",
+        "monolog/monolog": "^1.22"
+    },
+    "autoload": {
+        "psr-4": {
+            "PowerOn\\": "src"
+        },
+        "files": [
+            "src/Application/DefaultConfiguration.php",
+            "src/Application/Functions.php",
+            "src/Application/Bootstrap.php"
+        ]
+    }
+}
