@@ -31,7 +31,7 @@ class Session {
      * Elimina todas las sesiones activas sin importar el ID
      */
     public function destroy() {
-        $_SESSION = array();
+        $_SESSION = [];
         unset($_SESSION);
         $session_name = session_name();
         session_destroy();
@@ -44,6 +44,7 @@ class Session {
             setcookie('poweron_remember_user', NULL, -1, '/');
         }
     }
+    
     /**
      * Obtiene un dato de sesion
      * @param string $name

@@ -23,6 +23,7 @@ use PowerOn\Controller\Controller;
 use PowerOn\Network\Request;
 use PowerOn\View\View;
 use PowerOn\Utility\Container;
+use PowerOn\Exceptions\DevException;
 
 /**
  * Dispatcher
@@ -52,8 +53,8 @@ class Dispatcher {
      */
     public $controller;
     /**
-     * Resultado de la operación
-     * @var integer
+     * Resultado del handle del dispatcher
+     * @var mix
      */
     public $result;
     /**
@@ -77,13 +78,15 @@ class Dispatcher {
      */
     public function handle() {
         $this->controller = $this->_router->loadController();
-        return $this->controller ? self::FOUND : self::NOT_FOUND;
+        $this->result = $this->controller && method_exists($this->controller, $this->_router->action) ? self::FOUND : self::NOT_FOUND;
+        
+        return $this->result;
     }
     
     /**
      * Lanza la acción del controlador cargado
      * @param string $forze_action forza la ejecución de un método específico
-     * @throws \Exception
+     * @throws DevException
      */
     public function run($forze_action = NULL) {
         //Cargamos la plantilla por defecto
@@ -91,8 +94,12 @@ class Dispatcher {
 
         //Si todo esta OK lanzamos la acción final
         if ( $forze_action && !method_exists($this->controller, $forze_action) ) {
-            throw new \Exception(sprintf('No existe el m&eacute;todo (%s) del controlador cargado', $forze_action));
+            $reflection = new \ReflectionClass($this->controller);
+            
+            throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
+                    $forze_action, $reflection->getName()), ['controller' => $this->controller]);
         }
+        
         $this->controller->{ $forze_action ? $forze_action : $this->_router->action }();
         
         if ( $this->_request->is('ajax') ) {

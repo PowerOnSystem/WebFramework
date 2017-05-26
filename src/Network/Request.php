@@ -30,12 +30,12 @@ class Request {
      * Parámetros GET
      * @var array 
      */
-    private $_get = array();
+    private $_get = [];
     /**
      * URL Solicitada
      * @var array
      */
-    private $_url = array();
+    private $_url = [];
     /**
      * Metodo utilizado en la solicitud
      * @var string 
@@ -73,7 +73,7 @@ class Request {
         
         $this->_get = $query_strings ? array_map(function($value) {
             return htmlentities(urldecode($value));
-        }, $query_strings) : array();
+        }, $query_strings) : [];
         
         
         $url = array_filter(array_map(function($value) {
@@ -159,6 +159,10 @@ class Request {
         return htmlentities(utf8_decode(filter_input(INPUT_GET, $name, FILTER_SANITIZE_STRING)));
     }
 
+    /**
+     * Devuelve las queries enviadas
+     * @return array
+     */
     public function getQueries() {
         return $this->_get;
     }

@@ -20,7 +20,7 @@ namespace PowerOn\Routing;
 use PowerOn\Utility\Inflector;
 use PowerOn\Controller\Controller;
 use PowerOn\Authorizer\UserCredentials;
-
+use PowerOn\Exceptions\DevException;
 use PowerOn\Network\Request;
 
 /**
@@ -34,6 +34,7 @@ class Router {
      * @var string 
      */
     public $controller = 'index';
+    
     /**
      * El nombre de la accion a llamar
      * @var string 
@@ -51,12 +52,6 @@ class Router {
      * @var Request
      */
     private $_request;
-    
-    /**
-     * Logger
-     * @var \Monolog\Logger
-     */
-    private $_logger;
     
     /**
      * Regular expression for action names
@@ -95,19 +90,11 @@ class Router {
      */
     const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
     
-    public function __construct(Request $request, \Monolog\Logger $logger) {
-        $this->_request = $request;
-        $this->_logger = $logger;
-        
-        $routes_file = ROOT . DS . 'config' . DS . 'routes.php';
+    public function __construct(Request $request) {
+        $this->_request = $request;        
+        $routes_file = PO_PATH_APP . DS . 'config' . DS . 'routes.php';
         if ( is_file($routes_file) ) {
-            $routes = include ROOT . DS . 'config' . DS . 'routes.php';
-            foreach ($routes as $route) {
-                if ( is_array($route) ) {
-                    $pattern = '/^' . str_replace('/', '\/', $route[key_exists('pattern', $route) ? 'pattern' : 0]) . '$/';
-                    $this->_collections[$pattern] = key_exists(1, $route) && is_array($route[1]) ? $route[1] : NULL;
-                }
-            }
+            $this->_collections = include $routes_file;
         }
     }
     
@@ -121,7 +108,9 @@ class Router {
         $this->action = $force_action ? $force_action : ($this->_request->url(1) ? $this->_request->url(1) : $this->action);
 
         //Verificamos la ruta para obtener el controlador y la accion
-        $this->match($force_controller, $force_action);
+        if ( !$force_controller && !$force_action && $this->_collections ) {
+            $this->match();
+        }
         
         //Cargamos el controlador resultante
         $controller_name = Inflector::classify($this->controller) . 'Controller';
@@ -129,28 +118,21 @@ class Router {
                 . 'modules' . DS . 'Controller' . DS . $controller_name . '.php';
         $controller_class = 'App\\Controller\\' . $controller_name;
 
-        if ( !is_file($controller_file) ) {
-            $this->_logger->error( sprintf('No se existe la clase del controlador (%s)', $this->controller), 
-                [
-                    'class' => $controller_class, 
-                    'request' => $this->controller, 
-                    'name' => $controller_name,
-                    'file' => $controller_file
-                ] );
-            return FALSE;
-        } else {
+        if ( is_file($controller_file) && !class_exists($controller_class) ) {
             include $controller_file;
         }
         
         if ( !class_exists($controller_class) ) {
-            $this->_logger->error( sprintf('No se existe la clase del controlador (%s)', $this->controller), 
-                [
-                    'class' => $controller_class, 
-                    'request' => $this->controller, 
-                    'name' => $controller_name,
-                    'file' => $controller_file
-                ] );
-            
+            if ( $force_action || $force_controller ) {
+                throw new DevException( 
+                    sprintf('No se existe la clase del controlador (%s)', $this->controller), [
+                        'class' => $controller_class, 
+                        'request' => $this->controller, 
+                        'name' => $controller_name,
+                        'file' => $controller_file
+                    ] 
+                );
+            }
             return FALSE;
         }
         
@@ -161,15 +143,17 @@ class Router {
     /**
      * Verificamos si existen rutas apuntadas
      */
-    public function match($force_controller = NULL, $force_action = NULL) {
-        $path = $force_controller ? $force_controller . '/' . $force_action : $this->_request->path;
-        
-        $url = $path . (substr($path, strlen($path) - 1) != '/' ? '/' : '');
-
-        foreach ($this->_collections as $pattern => $match) {
-            if ( preg_match($pattern, $url) && $match ) {
-                $this->controller = $match['controller'];
-                $this->action = $match['action'];
+    public function match() {
+        $router = new \AltoRouter();
+        foreach ($this->_collections as $param => $route) {
+            $router->map('GET', $param, NULL);
+            if ( $router->match() ) {
+                if ( !key_exists(0, $route) || !key_exists(1, $route) ) {
+                    throw new DevException(sprintf('La ruta encontrada esta mal configurada', $param), 
+                            ['route' => $route, 'param' => $param]);
+                }
+                $this->controller = $route[0];
+                $this->action = $route[1];
             }
         }
     }
@@ -192,9 +176,9 @@ class Router {
             $v = $k . '=' . ($k == 'return' ? base64_encode($path) : $v);
         }, $this->_request->full_path);
         
-        $result = (CNC_DIR_ROOT ? '/' . CNC_DIR_ROOT : '') 
-            . ( key_exists('controller', $url) ? '/' . $url['controller'] : (key_exists('action', $url) ? '/' . CNC_SYSTEM_DEFAULT_CONTROLLER : ''))
-            . ( key_exists('action', $url) ? '/' . $url['action'] : ($vars ? CNC_SYSTEM_DEFAULT_ACTION : '') )
+        $result = (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') 
+            . ( key_exists('controller', $url) ? '/' . $url['controller'] : (key_exists('action', $url) ? '/index' : ''))
+            . ( key_exists('action', $url) ? '/' . $url['action'] : ($vars ? 'index' : '') )
             . ( $vars ? '/' . implode('/', $vars) : '' )
             . ( $gets ? '/?' . implode('&', $gets) : '' );
         
@@ -233,9 +217,9 @@ class Router {
         $url_controller = $controller ? $controller : $this->_request->controller;
         $url_action = $action ? $action : $this->_request->action;
         
-        $last_url = (CNC_DIR_ROOT ? '/' . CNC_DIR_ROOT : '') . 
-            '/' . ( $url_action == CNC_SYSTEM_DEFAULT_ACTION && $url_controller == CNC_SYSTEM_DEFAULT_CONTROLLER && !$url ? '' : $url_controller . '/' ) .
-            ( ($url_action == CNC_SYSTEM_DEFAULT_ACTION && $url) || $url_action != CNC_SYSTEM_DEFAULT_ACTION ? $url_action . '/' : '' ) . 
+        $last_url = (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . 
+            '/' . ( $url_action == 'index' && $url_controller == 'index' && !$url ? '' : $url_controller . '/' ) .
+            ( ($url_action == 'index' && $url) || $url_action != 'index' ? $url_action . '/' : '' ) . 
             implode('/', $url);
         
         $gets = $gets_request + $this->_request->getQueries();
@@ -244,9 +228,9 @@ class Router {
                 unset($gets[$gr]);
             }
         } 
-        array_walk($gets, function(&$v, $k, $path) {
-            $v = $k . '=' . ($k == 'return' ? base64_encode($path) : $v);
-        }, $this->_request->full_path);
+        array_walk($gets, function(&$v, $k) {
+            $v = $k . '=' . $v;
+        });
         
         return $last_url . ($gets ? (substr($last_url, -1) == '/' ? '' : '/') . '?' . implode('&', $gets) : '');
     }
@@ -259,15 +243,15 @@ class Router {
     public function pushUrl(array $push = []) {
         $query = [];
         if ( key_exists('query', $push) ) {
-            $query = \PowerOn\Core\PowerOnArrayTrim($push, 'query');
-            array_walk($query, function(&$v, $k, $path) {
-                $v = $k . '=' . ($k == 'return' ? base64_encode($path) : $v);
-            }, $this->_request->full_path);
+            $query = \PowerOn\Application\array_trim($push, 'query');
+            array_walk($query, function(&$v, $k) {
+                $v = $k . '=' . $v;
+            });
         }
         $path = substr($this->_request->path, -1) == '/' ? 
                 substr($this->_request->path, 0, strlen($this->_request->path) - 1) :
                 $this->_request->path;
-        return (CNC_DIR_ROOT ? '/' . CNC_DIR_ROOT : '') . '/' . $path . '/' . implode('/', $push) .
+        return (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . '/' . $path . '/' . implode('/', $push) .
                 ( $query ? '/?' . implode('&', $query) : '' );
     }
 }

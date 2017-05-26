@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace CNCService\Utility;
-use CNCService\Core\CoreException;
+namespace PowerOn\Utility;
+use PowerOn\Exceptions\DevException;
 
 /**
  * Sanitize procesa todo valor enviado por un formulario
@@ -96,7 +96,7 @@ class Sanitize {
      * @return string
      */
     public static function clearTitle($value) {
-        return addslashes(stripslashes(\CNCService\Core\CNCServiceUCFirst(filter_var($value, FILTER_SANITIZE_STRING))));
+        return addslashes(stripslashes(\PowerOn\Core\PowerOnUCFirst(filter_var($value, FILTER_SANITIZE_STRING))));
     }
     /**
      * 
@@ -170,7 +170,7 @@ class Sanitize {
      * @return string
      */
     public static function clearTime($value) {
-        $date_time = DateTime::createFromFormat(CNC_TIME_FORMAT, $value);
+        $date_time = \DateTime::createFromFormat(CNC_TIME_FORMAT, $value);
         return $date_time ? $date_time->format(CNC_DB_TIME_FORMAT) : FALSE;
     }
     
@@ -207,15 +207,10 @@ class Sanitize {
                 case self::SANITIZE_TIME        : $r = self::clearTime($value); break;
                 case self::SANITIZE_URL         : $r = self::clearUrl($value); break;
                 case self::SANITIZE_STRING      : $r = self::clearNatural($value); break;
-                default : throw new CoreException('No se reconoce el tipo de datos (' . $mode . ') a procesar.');
+                default : throw new DevException(sprintf('No se reconoce el tipo de datos (%s) a procesar.', $mode));
             }
         }
         
         return $r;
     }
-    /**
-     * Crea un elemento Sanitize para desinfectar un valor
-     * @param mix $value
-     */
-    public function __construct() {}
 }

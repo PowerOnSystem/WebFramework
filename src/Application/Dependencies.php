@@ -23,7 +23,7 @@ return [
     'PowerOn\View\Helper\BlockHelper' => ['PowerOn\View\Helper\HtmlHelper', 
         'PowerOn\View\Helper\FormHelper', 'PowerOn\Network\Request', 'PowerOn\Routing\Router'],
     'PowerOn\View\Helper\FormHelper' => ['PowerOn\Routing\Router', 'PowerOn\View\Helper\HtmlHelper'],
-    'PowerOn\Routing\Router' => ['PowerOn\Network\Request', 'Monolog\Logger'],
+    'PowerOn\Routing\Router' => ['PowerOn\Network\Request'],
     'PowerOn\Network\Request' => [],
-    'PowerOn\Controller\Controller::initialize' => ['PowerOn\View\View', 'PowerOn\Network\Request', 'PowerOn\Routing\Router']
+    'PowerOn\Controller\Controller::initialize' => ['PowerOn\View\View', 'PowerOn\Network\Request', 'PowerOn\Routing\Router', 'Monolog\Logger']
 ];

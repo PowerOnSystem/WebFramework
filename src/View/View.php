@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace PowerOn\View;
+use PowerOn\Exceptions\DevException;
 
 /**
  * Description of View
@@ -58,12 +59,12 @@ class View {
      * Errores
      * @var array 
      */
-    public $errors;
+    public $errors = [];
     /**
      * Alertas
      * @var array 
      */
-    public $warnings;
+    public $warnings = [];
     /**
      * Template a cargar
      * @var array
@@ -88,16 +89,13 @@ class View {
         $this->template = ['name' => $name, 'folder' => $folder];
     }
     
-    /**
-     * Carga en pantalla la plantilla indicada
-     * @throws CoreException En caso de error
-     */
+    
     public function render() {
         $view_file = $this->template['name'] . '.phtml';
         $path = PO_PATH_TEMPLATES . DS . $this->template['folder'] . DS . $view_file;
         
         if ( !is_file($path) ) {
-            throw new \Exception(sprintf('No se encuentra la plantilla (%s) a cargar en (%s).', $this->template['name'], $path));
+            throw new DevException(sprintf('No se encuentra la plantilla (%s) a cargar en (%s).', $this->template['name'], $path));
         }
         
         try {
@@ -105,14 +103,13 @@ class View {
             include $path;
             $this->content = ob_get_clean();
         } catch (\RuntimeException $e) {
-            ob_end_clean();
-            throw new \Exception(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));
-            
+            $this->content = ob_get_clean();
+            throw new DevException(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));            
         }
 
         $path_layout = PO_PATH_TEMPLATES . DS . 'layout' . DS . ($this->layout ? $this->layout : 'default') . '.phtml';
         if ( !is_file($path_layout) ) {
-            throw new \Exception(sprintf('No se encuentra la plantilla principal (%s) a cargar en (%s).', $this->layout, $path_layout));
+            throw new DevException(sprintf('No se encuentra la plantilla principal (%s) a cargar en (%s).', $this->layout, $path_layout));
         }
 
         require_once $path_layout;
@@ -129,7 +126,7 @@ class View {
     public function changeLayout($name) {
         $path_layout = PO_DIR_APP . DS . 'layout' . DS . $name . '.phtml';
         if ( !is_file($path_layout) ) {
-            throw new CoreException('No existe la plantilla solicitada (' . $name . ').', array('path' => $path_layout));
+            throw new DevException('No existe la plantilla solicitada (' . $name . ').', ['path' => $path_layout]);
         }
         $this->layout = $name;
     }
@@ -167,11 +164,11 @@ class View {
         $this->{$name} = $value;
         return $this;
     }
-    
+
     public function __set($name, $value) {
         $this->data[$name] = $value;
     }
-    
+
     public function __get($name) {
         if ( key_exists($name, $this->data) ){
             return $this->data[$name];

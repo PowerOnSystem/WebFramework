@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace CNCService\Utility;
-use CNCService\Core\CoreException;
+namespace PowerOn\Utility;
+use PowerOn\Exceptions\DevException;
 /**
  * Clase Moment
  * Controla todas las fechas
@@ -462,7 +462,7 @@ class Moment {
         );
         
         if ( !$data ) {
-            throw new CoreException('No se puede trabajar con el tiempo solicitado', array('time' => $time));
+            throw new DevException('No se puede trabajar con el tiempo solicitado', array('time' => $time));
         }
         
         return $data;

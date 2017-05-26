@@ -17,3 +17,98 @@
  */
 
 namespace PowerOn\Application;
+
+/**
+ * Obtiene un valor específico de un array y lo elimina
+ * @param array $array El array a obtener el valor
+ * @param mix $key El valor a obtener
+ * @return array Devuelve el valor solicitado
+ */
+function array_trim(array &$array, $key) {
+    if ( !key_exists($key, $array) ) {
+        return NULL;
+    }
+    $value = $array[$key];
+    unset ( $array[$key] );
+    array_unshift ( $array, array_shift ( $array ) );
+    return $value;
+}
+
+/**
+  * Formatea los Bytes indicados
+  * @param integer $size Los bytes a formatear
+  * @param integer $precision La presición de decimales
+  * @return string
+  */
+function format_bytes($size, $precision = 2) {
+    $base = log($size, 1024);
+    $suffixes = ['B', 'K', 'M', 'G', 'T'];
+
+    return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+} 
+ 
+/**
+ * Obtiene varias columnas especificas de un array
+ * @param array $array El array
+ * @param array $columns_keys Array con los nombres de las columnas
+ * @return array
+ */
+function array_column_multiple(array $array, array $columns_keys) {
+    $new = [];
+
+    foreach ($array as $k => $c) {
+        foreach ($columns_keys as $col) {
+            if ( (is_array($c) && array_key_exists($col, $c)) || (is_object($c) && property_exists($c, $col))) {
+                $new[$k][$col] = is_object($c) ? $c->{ $col } : $c[$col];
+            }
+        }
+    }
+    return $new;
+}
+
+/**
+ * Encripta una cadena
+ * @param string $words La cadena a encriptar
+ * @return string La cadena encriptada
+ */
+function poweron_crypt($words, $private_key) {
+    $encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($private_key), $words, MCRYPT_MODE_CBC, md5(md5($private_key))));
+    return $encrypted;
+ 
+}
+/**
+ * Desencripta una cadena
+ * @param string $words La cadena a desencriptar
+ * @return string la cadena desencriptada
+ */
+function poweron_decrypt($words, $private_key){
+     $decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($private_key),
+             base64_decode($words), MCRYPT_MODE_CBC, md5(md5($private_key))), "\0");
+    return $decrypted;
+}
+
+/**
+ * Encripta un password utilizando las funciones de php
+ * @param String $password el password a encriptar
+ * @param Integer $digit el numero de digitos
+ * @return String Devuelve el password encriptado
+ */
+function crypt_blowfish($password, $digit = 7) {
+    $set_salt = './1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $salt = sprintf('$2a$%02d$', $digit);
+    for($i = 0; $i < 22; $i++) {
+        $salt .= $set_salt[mt_rand(0, 63)];
+    }
+    
+    return crypt($password, $salt);
+}
+
+/**
+ * Comprueba que el password sea correcto utilizando el metodo crypt
+ * @param String $input El password enviado por el usuario
+ * @param String $saved El password guardado en db
+ * @return Boolean Devuelve True en caso de coincidir o False en caso contrario
+ */
+function test_crypt($input, $saved) {
+    return crypt($input, $saved) == $saved;
+}

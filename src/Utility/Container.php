@@ -18,6 +18,7 @@
  */
 
 namespace PowerOn\Utility;
+use PowerOn\Exceptions\DevException;
 
 /**
  * Container
@@ -40,11 +41,11 @@ class Container {
     /**
      * Crea las dependencias
      * @param string $file
-     * @throws \Exception
+     * @throws DevException
      */
     public function buildDependencies($file) {
         if ( !is_file($file) ) {
-            throw new \Exception('Las dependencias enviadas deben ser un archivo que resulte en un array.');
+            throw new DevException('Las dependencias enviadas deben ser un archivo que resulte en un array.', ['file' => $file]);
         }
         
         $this->_dependencies = include $file;
@@ -52,7 +53,7 @@ class Container {
     
     public function pushDependency($name, $instance) {
         if ( !is_object($instance) ) {
-            throw new \Exception('La dependencia a agregar debe ser una clase');
+            throw new DevException('La dependencia a agregar debe ser una clase', ['instance' => $instance]);
         }
         $this->_instances[$name] = $instance;
     }
@@ -61,15 +62,15 @@ class Container {
      * Obtiene una clase cargada en dependencias
      * @param string $class
      * @return object
-     * @throws \Exception
+     * @throws DevException
      */
     public function get($class) {
         if ( !key_exists($class, $this->_dependencies) ) {
-            throw new \Exception(sprintf('La dependencia (%s) no existe.', $class));
+            throw new DevException(sprintf('La dependencia (%s) no existe.', $class));
         }
         
         if ( in_array($class, $this->_dependencies[$class]) ) {
-            throw new \Exception(sprintf('La clase (%s) no puede depender de si misma.', $class));
+            throw new DevException(sprintf('La clase (%s) no puede depender de si misma.', $class));
         }
         
         if ( !key_exists($class, $this->_instances) ) {
@@ -89,7 +90,7 @@ class Container {
      * @param object $instance La instancia de la clase
      * @param string $method El método de la clase a llamar
      * @param array $additional_params Parámetros adicionales a pasar al metodo
-     * @throws \Exception
+     * @throws DevException
      */
     public function method($instance, $method, $additional_params = []) {
         
@@ -97,7 +98,8 @@ class Container {
         $name = $r->getName() . '::' . $method;
         
         if ( !method_exists($instance, $method) ) {
-            throw new \Exception(sprintf('El m&eacute;todo (%s) no existe en la clase (%s)', $method, $r->getName()));
+            throw new DevException(sprintf('El m&eacute;todo (%s) no existe en la clase (%s)', 
+                    $method, $r->getName()), ['instance' => $instance]);
         }
         
         if ( !key_exists($name, $this->_dependencies) ) {
@@ -105,7 +107,8 @@ class Container {
         }
         
         if ( !key_exists($name, $this->_dependencies) ) {
-            throw new \Exception(sprintf('El m&eacute;todo (%s) de la clase (%s) no tiene dependencias declaradas', $method, $r->getName()));
+            throw new DevException(sprintf('El m&eacute;todo (%s) de la clase (%s) no tiene dependencias declaradas',
+                    $method, $r->getName()), ['dependencies' => $this->_dependencies]);
         }
         
         $params = $this->_params($this->_dependencies[$name]) + $additional_params;

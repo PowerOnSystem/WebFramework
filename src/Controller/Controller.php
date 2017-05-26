@@ -22,7 +22,6 @@ namespace PowerOn\Controller;
 use PowerOn\View\View;
 use PowerOn\Network\Request;
 use PowerOn\Routing\Router;
-use PowerOn\Core\Core;
 
 /**
  * Controlador
@@ -45,17 +44,23 @@ class Controller {
      * @var Router
      */
     protected $router;
+    /**
+     * Logger del sistema
+     * @var \Monolog\Logger
+     */
+    protected $logger;
 
     /**
      * Inicializa un controlador
      * @param View $view
      * @param Request $request
      * @param Router $router
-     * @param Core $core
+     * @param \Monolog\Logger $logger
      */
-    public function initialize(View $view, Request $request, Router $router) {
+    public function initialize(View $view, Request $request, Router $router, \Monolog\Logger $logger) {
         $this->view = $view;
         $this->request = $request;
         $this->router = $router;
+        $this->logger = $logger;
     }
 }

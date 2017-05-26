@@ -16,18 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace PowerOn\Network;
+namespace PowerOn\Exceptions;
 
 /**
- * Response
+ * ProdException Controla los errores causados por errores de programación
  * @author Lucas Sosa
  * @version 0.1
  */
-class Response {
-
-    public function __construct() {
-        
+class ProdException extends \Exception {
+    
+    /**
+     * Contempla los errores de programación
+     * @param string $message
+     * @param integer $code [Opcional] Código de error
+     * @param \Exception $exception [Opcional] Excepcion anterior
+     */
+    public function __construct($message = '', $code = NULL, \Exception $exception = NULL) {
+        parent::__construct($message, $code, $exception);
     }
-
 }

@@ -18,4 +18,7 @@
 
 /* @var $this PowerOn\View\View */
 ?>
-Lo siento, ha ocurrido un error y no se puede continuar.
+<?php foreach ( $this->errors as $error ) : ?>
+<h1><?= $error['title'] ?> <?= $error['code'] ?></h1>
+<h3><?= $error['message'] ?></h3>
+<?php endforeach ?>
