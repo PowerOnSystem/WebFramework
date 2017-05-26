@@ -1,5 +1,6 @@
 {
     "name": "poweronsystem/webframework",
+    "version": "dev-master",
     "description": "Framework for web design.",
     "keywords": ["framework", "web design", "web utilities"],
     "homepage": "https://github.com/poweronsystem/webframework",
