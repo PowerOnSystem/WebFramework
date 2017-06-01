@@ -16,6 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* @var $container \Pimple\Container */
+
+
+$container['Logger'] = function() {   
+    $logger = new Monolog\Logger('PowerOn');
+    if ( PO_DEVELOPER_MODE ) {
+        $handler = new \Monolog\Handler\BrowserConsoleHandler();
+        $formatter = new Monolog\Formatter\LineFormatter('%level_name% > %message%');
+        $handler->setFormatter($formatter);
+    } else {
+        $handler = new Monolog\Handler\StreamHandler(ROOT . DS . 'error.log');
+    }
+    $logger->pushHandler($handler);
+};
+
+$container['Request'] = function() {
+    return new \PowerOn\Network\Request();
+};
+
+$container['Router'] = function($c) {
+    return new \PowerOn\Routing\Router($c['Request']);
+};
+
+$container['Dispatcher'] = function($c) {
+    return new \PowerOn\Routing\Dispatcher($c['Router'], $c['Request']);
+};
+
+/*
 return [
     'PowerOn\Routing\Dispatcher' => ['PowerOn\Routing\Router', 'PowerOn\Network\Request', 'PowerOn\View\View'],
     'PowerOn\View\View' => [],
@@ -27,3 +55,4 @@ return [
     'PowerOn\Network\Request' => [],
     'PowerOn\Controller\Controller::initialize' => ['PowerOn\View\View', 'PowerOn\Network\Request', 'PowerOn\Routing\Router', 'Monolog\Logger']
 ];
+*/

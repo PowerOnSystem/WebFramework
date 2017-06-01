@@ -57,7 +57,7 @@ class Controller {
      * @param Router $router
      * @param \Monolog\Logger $logger
      */
-    public function initialize(View $view, Request $request, Router $router, \Monolog\Logger $logger) {
+    public function registerServices(View $view, Request $request, Router $router, \Monolog\Logger $logger) {
         $this->view = $view;
         $this->request = $request;
         $this->router = $router;

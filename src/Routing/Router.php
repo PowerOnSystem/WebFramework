@@ -100,15 +100,15 @@ class Router {
     
     /**
      * Carga el controlador solicitado
-     * @param UserCredentials $credentials
+     * @param string $force_controller Forza la carga de un controlador especifico
      * @return Controller
      */
-    public function loadController($force_controller = NULL, $force_action = NULL) {
+    public function loadController($force_controller = NULL) {
         $this->controller = $force_controller ? $force_controller : ($this->_request->url(0) ? $this->_request->url(0) : $this->controller);
-        $this->action = $force_action ? $force_action : ($this->_request->url(1) ? $this->_request->url(1) : $this->action);
+        $this->action = $this->_request->url(1) ? $this->_request->url(1) : $this->action;
 
         //Verificamos la ruta para obtener el controlador y la accion
-        if ( !$force_controller && !$force_action && $this->_collections ) {
+        if ( !$force_controller && $this->_collections ) {
             $this->match();
         }
         
@@ -123,7 +123,7 @@ class Router {
         }
         
         if ( !class_exists($controller_class) ) {
-            if ( $force_action || $force_controller ) {
+            if ( $force_controller ) {
                 throw new DevException( 
                     sprintf('No se existe la clase del controlador (%s)', $this->controller), [
                         'class' => $controller_class, 

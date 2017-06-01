@@ -17,60 +17,51 @@
  */
 namespace PowerOn\Application;
 
-use PowerOn\Utility\Container;
 use PowerOn\Routing\Dispatcher;
 use PowerOn\Exceptions\DevException;
 use PowerOn\Exceptions\ProdException;
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\BrowserConsoleHandler;
-use Monolog\Formatter\LineFormatter;
+use Pimple\Container;
 
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-//Monolog logger config
-$logger = new Logger('PowerOn');
-if ( PO_DEVELOPER_MODE ) {
-    $handler = new BrowserConsoleHandler();
-    $formatter = new LineFormatter('%level_name% > %message%');
-    $handler->setFormatter($formatter);
-} else {
-    $handler = new StreamHandler(ROOT . DS . 'error.log');
-}
-$logger->pushHandler($handler);
 
-//Container build
+
+//Pimple Container
 $container = new Container();
+
 try {
     try {
-        $container->buildDependencies(POWERON_ROOT . DS . 'Application' . DS . 'Dependencies.php');
-        $container->pushDependency('Monolog\Logger', $logger);
+        include POWERON_ROOT . DS . 'Application' . DS . 'Configuration.php';
 
         /* @var $dispatcher \PowerOn\Routing\Dispatcher */
-        $dispatcher = $container->get('PowerOn\Routing\Dispatcher');
-
+        $dispatcher = $container['Dispatcher'];
+        
         switch ( $dispatcher->handle() ) {
-            case Dispatcher::NOT_FOUND  : throw new ProdException('Sector no encontrado', 404);
-            case Dispatcher::FOUND      : $dispatcher->run(); break;
+            case Dispatcher::NOT_FOUND  : throw new ProdException('Sector no encontrado', 404); 
+            case Dispatcher::FOUND      :
+                $dispatcher->run(); break;
             default                     : 
-                throw new DevException('El dispatcher no retorn&oacute; el valor esperado.', ['dispatcher_result' => $dispatcher->result]);
+                throw new DevException('El dispatcher no retorn&oacute; el valor esperado.', 
+                        ['dispatcher_result' => $dispatcher->result]);
         }
     } catch (DevException $d) {
         if ( PO_DEVELOPER_MODE ) {
-            echo '<h1>' . $e->getMessage() . '</h1>';
-            echo '<h4>' . $e->getFile() . ' ('. $e->getLine() . ')</h4>';
+            echo '<h1>' . $d->getMessage() . '</h1>';
+            echo '<h4>' . $d->getFile() . ' ('. $d->getLine() . ')</h4>';
             echo '<h5>DEBUG:</h5>';
             var_dump($d->getContext());
             echo '<h5>TRACE:</h5>';
-            var_dump(array_map(function($e) {
-                return (key_exists('class', $e) ? $e['class'] : '') . 
-                        (key_exists('type', $e) ? $e['type'] : '') .
-                        $e['function'] . (key_exists('args', $e) ? '(' . json_encode($e['args']) . ')' : '') . ' [' . 
-                        (key_exists('file', $e) ? $e['file'] : '') . '-' . 
-                        (key_exists('line', $e) ? $e['line'] : '') . ']';
-            }, $e->getTrace()));
+            var_dump(array_map(function($d) {
+                return (key_exists('class', $d) ? $d['class'] : '') . 
+                        (key_exists('type', $d) ? $d['type'] : '') .
+                        $d['function'] . (key_exists('args', $d) ? '(' . json_encode($d['args']) . ')' : '') . ' [' . 
+                        (key_exists('file', $d) ? $d['file'] : '') . '-' . 
+                        (key_exists('line', $d) ? $d['line'] : '') . ']';
+            }, $d->getTrace()));
         } else {
+            /*  @var $logger \Monolog\Logger */
+            $logger = $container['Logger'];
             $logger->error($d->getMessage(), [
                 'line' => $d->getLine(),
                 'file' => $d->getFile(),
@@ -81,9 +72,6 @@ try {
         }
     }
 } catch (ProdException $p) {
-    /* @var $view \PowerOn\View\View */
-    $view = $container->get('PowerOn\View\View');
-    $view->error(['title' => 'Error', 'message' => $p->getMessage(), 'code' => $p->getCode()]);
-    
-    $dispatcher->runController('index', 'error', $container);
+    $controller = $dispatcher->loadController('index');
+    $controller->registerServices($view, $request, $router, $logger);
 }

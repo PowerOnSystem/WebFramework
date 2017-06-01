@@ -66,10 +66,9 @@ class Dispatcher {
      */
     const FOUND = 1;
     
-    public function __construct(Router $router, Request $request, View $view) {
+    public function __construct(Router $router, Request $request) {
         $this->_router = $router;
         $this->_request = $request;
-        $this->_view = $view;
     }
     
     /**
@@ -89,8 +88,16 @@ class Dispatcher {
      * @throws DevException
      */
     public function run($forze_action = NULL) {
+        $view_file = PO_PATH_VIEW . DS . 'AppView.php';
+        if ( !is_file($view_file) ) {
+            $view = new View();
+        } else {
+            include_once $view_file;
+            $view = new \App\View\AppView();
+        }
+        
         //Cargamos la plantilla por defecto
-        $this->_view->setTemplate($this->_router->action, $this->_router->controller);
+        $view->setTemplate($this->_router->action, $this->_router->controller);
 
         //Si todo esta OK lanzamos la acción final
         if ( $forze_action && !method_exists($this->controller, $forze_action) ) {
@@ -103,10 +110,10 @@ class Dispatcher {
         $this->controller->{ $forze_action ? $forze_action : $this->_router->action }();
         
         if ( $this->_request->is('ajax') ) {
-            $this->_view->ajax();
+            $view->ajax();
         } else {
             //Cargamos la vista del controlador en case que no sea una peticion ajax
-            $this->_view
+            $view
                 ->set('controller', $this->_router->controller)
                 ->set('action', $this->_router->action)
                 ->set('url', $this->_request->path)
@@ -126,5 +133,15 @@ class Dispatcher {
         $this->controller = $this->_router->loadController($controller, $action);
         $container->method($this->controller, 'initialize');
         $this->run($action);
+    }
+    
+    /**
+     * Devuelve el controlador solicitado
+     * @param type $controller
+     * @return Controller
+     */
+    public function loadController($controller) {
+        $this->controller = $this->_router->loadController($controller);
+        return $this->controller;
     }
 }
