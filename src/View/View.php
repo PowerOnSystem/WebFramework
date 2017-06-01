@@ -70,7 +70,7 @@ class View {
      * Constructor de la clase View
      * Controla todos los templates
      */
-    public function __construct() {
+    public function initialize() {
         $config_file = PO_PATH_CONFIG . DS . 'application.php';
         
         if ( is_file($config_file) ) {

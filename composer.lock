@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0cf726544695c7d10242a7a316ee2d5",
+    "content-hash": "21429d1b714efa1491d1aeecb45206c1",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -192,6 +192,55 @@
             "time": "2017-03-13T07:08:03+00:00"
         },
         {
+            "name": "pimple/pimple",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/silexphp/Pimple.git",
+                "reference": "93ec38f1df4d4ad3f0c71bc9273139fa8af29f3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/93ec38f1df4d4ad3f0c71bc9273139fa8af29f3e",
+                "reference": "93ec38f1df4d4ad3f0c71bc9273139fa8af29f3e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Pimple": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Pimple, a simple Dependency Injection Container",
+            "homepage": "http://pimple.sensiolabs.org",
+            "keywords": [
+                "container",
+                "dependency injection"
+            ],
+            "time": "2017-03-24 14:13:45"
+        },
+        {
             "name": "psr/log",
             "version": "1.0.2",
             "source": {
@@ -243,7 +292,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "altorouter/altorouter": 20
+        "altorouter/altorouter": 20,
+        "pimple/pimple": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
