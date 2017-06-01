@@ -26,9 +26,5 @@ use PowerOn\View\View;
  * @version 0.1
  */
 class AppView extends View {
-
-    public function initialize() {
-        
-    }
     
 }

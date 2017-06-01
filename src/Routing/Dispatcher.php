@@ -84,30 +84,23 @@ class Dispatcher {
     
     /**
      * Lanza la acción del controlador cargado
-     * @param string $forze_action forza la ejecución de un método específico
+     * @param View $view Vista
+     * @param string $force_action forza la ejecución de un método específico
      * @throws DevException
      */
-    public function run($forze_action = NULL) {
-        $view_file = PO_PATH_VIEW . DS . 'AppView.php';
-        if ( !is_file($view_file) ) {
-            $view = new View();
-        } else {
-            include_once $view_file;
-            $view = new \App\View\AppView();
-        }
-        
+    public function run(View $view, $force_action = NULL) {
         //Cargamos la plantilla por defecto
         $view->setTemplate($this->_router->action, $this->_router->controller);
 
         //Si todo esta OK lanzamos la acción final
-        if ( $forze_action && !method_exists($this->controller, $forze_action) ) {
+        if ( $force_action && !method_exists($this->controller, $force_action) ) {
             $reflection = new \ReflectionClass($this->controller);
             
             throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
-                    $forze_action, $reflection->getName()), ['controller' => $this->controller]);
+                    $force_action, $reflection->getName()), ['controller' => $this->controller]);
         }
         
-        $this->controller->{ $forze_action ? $forze_action : $this->_router->action }();
+        $this->controller->{ $force_action ? $force_action : $this->_router->action }();
         
         if ( $this->_request->is('ajax') ) {
             $view->ajax();

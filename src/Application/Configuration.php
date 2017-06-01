@@ -29,6 +29,8 @@ $container['Logger'] = function() {
         $handler = new Monolog\Handler\StreamHandler(ROOT . DS . 'error.log');
     }
     $logger->pushHandler($handler);
+    
+    return $logger;
 };
 
 $container['Request'] = function() {
@@ -43,16 +45,16 @@ $container['Dispatcher'] = function($c) {
     return new \PowerOn\Routing\Dispatcher($c['Router'], $c['Request']);
 };
 
-/*
-return [
-    'PowerOn\Routing\Dispatcher' => ['PowerOn\Routing\Router', 'PowerOn\Network\Request', 'PowerOn\View\View'],
-    'PowerOn\View\View' => [],
-    'PowerOn\View\Helper\HtmlHelper' => ['PowerOn\Routing\Router'],
-    'PowerOn\View\Helper\BlockHelper' => ['PowerOn\View\Helper\HtmlHelper', 
-        'PowerOn\View\Helper\FormHelper', 'PowerOn\Network\Request', 'PowerOn\Routing\Router'],
-    'PowerOn\View\Helper\FormHelper' => ['PowerOn\Routing\Router', 'PowerOn\View\Helper\HtmlHelper'],
-    'PowerOn\Routing\Router' => ['PowerOn\Network\Request'],
-    'PowerOn\Network\Request' => [],
-    'PowerOn\Controller\Controller::initialize' => ['PowerOn\View\View', 'PowerOn\Network\Request', 'PowerOn\Routing\Router', 'Monolog\Logger']
-];
-*/
+$container['View'] = function() {
+    $view_file = PO_PATH_VIEW . DS . 'AppView.php';
+    if ( !is_file($view_file) ) {
+        $view = new PowerOn\View\View();
+    } else {
+        include_once $view_file;
+        $view = new \App\View\AppView();
+    }
+    
+    $view->initialize();
+    
+    return $view;
+};

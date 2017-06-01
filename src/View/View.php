@@ -47,9 +47,9 @@ class View {
     private $data = [];
     /**
      * Helpers cargados
-     * @var Helper
+     * @var \Pimple\Container
      */
-    private $helpers = [];
+    public $helpers;
     /**
      * Configuracion
      * @var array
@@ -71,22 +71,27 @@ class View {
      * Controla todos los templates
      */
     public function initialize() {
-        $config_file = PO_PATH_CONFIG . DS . 'application.php';
+        $this->helpers = $this->buildHelpers( new \Pimple\Container );
+    }
+    //VERIFICAR PORQUE NO ME GUSTA NADA
+    public function buildHelpers(\Pimple\Container $container) {
+        $container['html'] = function() {
+            $helper = new \PowerOn\View\Helper\HtmlHelper();
+            $helper->initialize();
+            return $helper;
+        };
+        $container['block'] = function() {
+            $helper = new \PowerOn\View\Helper\BlockHelper();
+            $helper->initialize();
+            return $helper;
+        };
+        $container['form'] = function() {
+            $helper = new \PowerOn\View\Helper\FormHelper();
+            $helper->initialize();
+            return $helper;
+        };
         
-        if ( is_file($config_file) ) {
-            $config = include $config_file;
-            if ( !is_array($config_file) ) {
-                throw new DevException(sprintf('El archivo de configuraci&oacute;n (%s) debe retornar un array', $config_file), 
-                        ['result' => $config]);
-            }
-            $this->config = [
-                'heper' => [
-                    'html' => 'PowerOn\View\Helper\HtmlHelper',
-                    'form' => 'PowerOn\View\Helper\FormHelper',
-                    'block' => 'PowerOn\View\Helper\BlockHelper',
-                ]
-            ] + key_exists('View', $config) ? $config['View'] : [];
-        }
+        return $container;
     }
     
     /**
@@ -231,6 +236,8 @@ class View {
     public function __get($name) {
         if ( key_exists($name, $this->data) ){
             return $this->data[$name];
+        } else if ( $this->helpers->offsetExists($name) ) {
+            return $this->helpers[$name];
         }
         return NULL;
     }

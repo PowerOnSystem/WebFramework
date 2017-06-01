@@ -59,8 +59,9 @@ class Helper {
      * @return Helper|null Si se encuentra un helper con ese nombre lo retorna.
      */
     public function __get($name) {
-        if ( isset($this->_helpers[$name]) && !isset($this->{$name}) ) {
-            $this->{$name} = $this->_view->loadHelper($this->_helpers[$name]);
+        if ( !isset( $this->{$name} )  && $this->_view->helpers->offsetExists($name) ) {
+            $this->{$name} = $this->_view->helpers[$name];
+            
             return $this->{$name};
         }
     }

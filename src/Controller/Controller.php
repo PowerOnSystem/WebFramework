@@ -49,7 +49,11 @@ class Controller {
      * @var \Monolog\Logger
      */
     protected $logger;
-
+    /**
+     * Registra una excepcion generada
+     * @var \Exception
+     */
+    protected $exception;
     /**
      * Inicializa un controlador
      * @param View $view
@@ -62,5 +66,9 @@ class Controller {
         $this->request = $request;
         $this->router = $router;
         $this->logger = $logger;
+    }
+    
+    public function registerException(\Exception $exception) {
+        $this->exception = $exception;
     }
 }

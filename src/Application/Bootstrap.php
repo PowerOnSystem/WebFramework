@@ -20,15 +20,12 @@ namespace PowerOn\Application;
 use PowerOn\Routing\Dispatcher;
 use PowerOn\Exceptions\DevException;
 use PowerOn\Exceptions\ProdException;
-
-use Pimple\Container;
-
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-
+$load_time = microtime(TRUE);
 
 //Pimple Container
-$container = new Container();
+$container = new \Pimple\Container();
 
 try {
     try {
@@ -40,7 +37,9 @@ try {
         switch ( $dispatcher->handle() ) {
             case Dispatcher::NOT_FOUND  : throw new ProdException('Sector no encontrado', 404); 
             case Dispatcher::FOUND      :
-                $dispatcher->run(); break;
+                $dispatcher->controller->registerServices(
+                        $container['View'], $container['Request'], $container['Router'], $container['Logger']);
+                $dispatcher->run($container['View']); break;
             default                     : 
                 throw new DevException('El dispatcher no retorn&oacute; el valor esperado.', 
                         ['dispatcher_result' => $dispatcher->result]);
@@ -72,6 +71,12 @@ try {
         }
     }
 } catch (ProdException $p) {
-    $controller = $dispatcher->loadController('index');
-    $controller->registerServices($view, $request, $router, $logger);
+    $dispatcher->loadController('index');
+    $dispatcher->controller->registerServices($container['View'], $container['Request'], $container['Router'], $container['Logger']);
+    $dispatcher->controller->registerException($p);
+    $dispatcher->run($container['View'], 'error');
+}
+
+if (PO_DEVELOPER_MODE) {
+    echo '<p>Execution Time: ' . number_format(microtime(TRUE) - $load_time, 4) . '</p>';
 }
