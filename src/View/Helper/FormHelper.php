@@ -139,7 +139,7 @@ class FormHelper {
             'class' =>  'ui form ajax ' . $class,
             'name' => $this->form->name,
             'id' => $this->form->name,
-            'action' => $action ? $action : $this->_router->modifyUrl(),
+            'action' => $action ? $action :$this->form->action,
             'method' => 'post',
             'novalidate' => 'novalidate'
         );

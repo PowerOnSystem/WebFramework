@@ -17,14 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace PowerOn\View\Helper;
-
-/**
- * BlockHelper
- * Maneja los bloques de codigo
- * @author Lucas Sosa
- * @version 0.1
+/*
+ * Configuracion de la aplicación completa y los servicios instalados.
+ * En esta sección se configuran todos los servicios utilizados.
+ * Por ejemplo, si se está utilizando PowerOnDBService:
+ * return [
+ *      'PowerOnDBService' => [
+ *          'host' => 'localhost',
+ *          'user' => ...
+ *      ]
+ * ]
  */
-class BlockHelper extends Helper {
-    
-}
+return [
+    'View' => [
+        'helper' => [
+           /*
+            * Helpers de templates, para reemplazar los existentes (html,
+            * block y form), solo basta con colocar su namespace
+            *  y el nombre, ejemplo: 'html' => 'Mi\Propio\Helper\Html' 
+           */
+        ]
+    ]
+];

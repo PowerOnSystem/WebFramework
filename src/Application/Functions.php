@@ -19,6 +19,17 @@
 namespace PowerOn\Application;
 
 /**
+ * Serializa un Array en formato html para una etiqueta key="value"
+ * @param array $array El array a serializar
+ * @return string Devuelve una cadena con los datos serializados
+ */
+function html_serialize(array $array) {
+    return implode(' ', array_map(function($v, $k) {
+        return $v !== NULL && (is_string($v) || is_numeric($v)) ? $k . '="' . $v . '"' : ''; 
+    }, $array, array_keys($array)));
+}
+
+/**
  * Obtiene un valor específico de un array y lo elimina
  * @param array $array El array a obtener el valor
  * @param mix $key El valor a obtener

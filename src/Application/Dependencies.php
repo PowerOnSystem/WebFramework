@@ -18,7 +18,7 @@
 
 return [
     'PowerOn\Routing\Dispatcher' => ['PowerOn\Routing\Router', 'PowerOn\Network\Request', 'PowerOn\View\View'],
-    'PowerOn\View\View' => ['PowerOn\View\Helper\HtmlHelper', 'PowerOn\View\Helper\FormHelper', 'PowerOn\View\Helper\BlockHelper'],
+    'PowerOn\View\View' => [],
     'PowerOn\View\Helper\HtmlHelper' => ['PowerOn\Routing\Router'],
     'PowerOn\View\Helper\BlockHelper' => ['PowerOn\View\Helper\HtmlHelper', 
         'PowerOn\View\Helper\FormHelper', 'PowerOn\Network\Request', 'PowerOn\Routing\Router'],
