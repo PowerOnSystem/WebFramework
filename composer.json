@@ -13,12 +13,16 @@
             "role": "Developer"
         }
     ],
+    "scripts": {
+        "post-install-cmd": "PowerOn\\Console::postInstall"
+    },
     "require": {
         "php": ">=5.4",
         "mobiledetect/mobiledetectlib": "^2.8",
         "monolog/monolog": "^1.22",
         "altorouter/altorouter": "^1.2",
-        "pimple/pimple": "^3.0"
+        "pimple/pimple": "^3.0",
+        "poweronsystem/webframework": "dev-master"
     },
     "autoload": {
         "psr-4": {
