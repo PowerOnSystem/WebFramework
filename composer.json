@@ -17,7 +17,7 @@
         "php": ">=5.4",
         "mobiledetect/mobiledetectlib": "^2.8",
         "monolog/monolog": "^1.22",
-        "altorouter/altorouter": "dev-master",
+        "altorouter/altorouter": "^1.2",
         "pimple/pimple": "dev-master"
     },
     "autoload": {

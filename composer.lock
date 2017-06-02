@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "21429d1b714efa1491d1aeecb45206c1",
+    "content-hash": "728ae453346f752a6b500a7a650605bc",
     "packages": [
         {
             "name": "altorouter/altorouter",
-            "version": "dev-master",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dannyvankooten/AltoRouter.git",
-                "reference": "1ff4165b28423f4b937c545777e182b93e8233d5"
+                "reference": "39c50092470128c12284d332bb57f306bb5b58e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dannyvankooten/AltoRouter/zipball/1ff4165b28423f4b937c545777e182b93e8233d5",
-                "reference": "1ff4165b28423f4b937c545777e182b93e8233d5",
+                "url": "https://api.github.com/repos/dannyvankooten/AltoRouter/zipball/39c50092470128c12284d332bb57f306bb5b58e4",
+                "reference": "39c50092470128c12284d332bb57f306bb5b58e4",
                 "shasum": ""
             },
             "require": {
@@ -59,7 +59,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2017-04-10 14:36:22"
+            "time": "2015-11-30T00:47:43+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -189,7 +189,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2017-05-03 13:17:21"
+            "time": "2017-05-03T13:17:21+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -238,7 +238,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2017-03-24 14:13:45"
+            "time": "2017-03-24T14:13:45+00:00"
         },
         {
             "name": "psr/log",
@@ -285,14 +285,13 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "altorouter/altorouter": 20,
         "pimple/pimple": 20
     },
     "prefer-stable": false,
