@@ -27,6 +27,6 @@ class Console {
      * solicitarlo como requisito en composer
      */
     public static function postInstall() {
-        define('PRODUCTION_ENVIRONMENT', TRUE);
+        
     }
 }
