@@ -18,8 +18,6 @@
 
 define('PO_DEVELOPER_MODE', defined('PRODUCTION_ENVIRONMENT') ? FALSE : TRUE);
 
-echo PO_DEVELOPER_MODE . ' - ';
-
 //PATHS POR DEFECTO
 defined('PO_PATH_ROOT') ?: define('PO_PATH_ROOT', '');
 defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT . DS . (PO_DEVELOPER_MODE ? 'testapp' : 'app'));
