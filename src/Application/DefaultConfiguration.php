@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('PO_DEVELOPER_MODE', defined('PRODUCTION_ENVIRONMENT') ? FALSE : TRUE);
+define('PO_DEVELOPER_MODE', FALSE);
 
 //PATHS POR DEFECTO
 defined('PO_PATH_ROOT') ?: define('PO_PATH_ROOT', '');
