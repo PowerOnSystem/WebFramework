@@ -19,7 +19,7 @@
 /* @var $container \Pimple\Container */
 
 
-$container['Logger'] = function() {   
+$container['Logger'] = function() {
     $logger = new Monolog\Logger('PowerOn');
     if ( PO_DEVELOPER_MODE ) {
         $handler = new \Monolog\Handler\BrowserConsoleHandler();

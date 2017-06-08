@@ -38,11 +38,6 @@ class Dispatcher {
      */
     private $_router;
     /**
-     * Maneja la vista final
-     * @var View 
-     */
-    private $_view;
-    /**
      * Solicitud
      * @var Request
      */
