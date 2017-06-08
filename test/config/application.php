@@ -20,22 +20,21 @@
 /*
  * Configuracion de la aplicación completa y los servicios instalados.
  * En esta sección se configuran todos los servicios utilizados.
- * Por ejemplo, si se está utilizando PowerOnDBService:
+ * Por ejemplo, si se está utilizando DataBaseService:
  * return [
- *      'PowerOnDBService' => [
+ *      'DataBaseService' => [
  *          'host' => 'localhost',
  *          'user' => ...
  *      ]
  * ]
  */
 return [
-    'View' => [
-        'helper' => [
-           /*
-            * Helpers de templates, para reemplazar los existentes (html,
-            * block y form), solo basta con colocar su namespace
-            *  y el nombre, ejemplo: 'html' => 'Mi\Propio\Helper\Html' 
-           */
-        ]
+    'Global' => [
+        'lang' => 'es'
+    ],
+    'Date' => [
+        'date' => 'd/m/Y',
+        'date_time' => 'd/m/Y H:i',
+        'time' => 'H:i'
     ]
 ];

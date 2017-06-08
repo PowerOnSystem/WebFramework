@@ -17,21 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace PowerOn\Exceptions;
+use PowerOn\Utility\Lang;
 
 /**
- * ProdException Controla los errores causados por errores de programación
+ * ProdException Controla los errores definidos para el usuario final
  * @author Lucas Sosa
  * @version 0.1
  */
 class ProdException extends \Exception {
     
+    private $debug_message;
     /**
      * Contempla los errores de programación
-     * @param string $message
-     * @param integer $code [Opcional] Código de error
+     * @param integer $code Código de error
+     * @param string $message [Opcional] Mensaje a enviar al desarrollador
      * @param \Exception $exception [Opcional] Excepcion anterior
      */
-    public function __construct($message = '', $code = NULL, \Exception $exception = NULL) {
-        parent::__construct($message, $code, $exception);
+    public function __construct($code = NULL, $message = '', \Exception $exception = NULL) {
+        $this->debug_message = $message;
+        $message = Lang::get('errors.' . $code);
+
+        parent::__construct($message ? $message : 'No es posible continuar con la operaci&oacute;n', $code, $exception);
     }
 }

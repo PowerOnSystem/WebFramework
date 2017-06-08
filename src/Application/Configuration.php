@@ -37,8 +37,12 @@ $container['Request'] = function() {
     return new \PowerOn\Network\Request();
 };
 
+$container['AltoRouter'] = function() {
+    return new AltoRouter();
+};
+
 $container['Router'] = function($c) {
-    return new \PowerOn\Routing\Router($c['Request']);
+    return new \PowerOn\Routing\Router($c['Request'], $c['AltoRouter']);
 };
 
 $container['Dispatcher'] = function($c) {

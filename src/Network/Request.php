@@ -42,15 +42,15 @@ class Request {
      */
     private $_method;
     /**
-     * Controlador de sesiones
-     * @var Session
-     */
-    public $session;
-    /**
      * Detector de dispositivos
      * @var MobileDetect
      */
-    public $device;
+    private $_device;
+    /**
+     * Controlador de sesiones
+     * @var Session
+     */
+    private $_session;
     /**
      * La url completa finaliza SIN BARRA "/"
      * @var string 
@@ -64,8 +64,6 @@ class Request {
     
 
     public function __construct() {
-        $this->session = new Session();
-        $this->device = new MobileDetect();
         $this->full_path = $this->server('REQUEST_URI');
         $this->path = strpos($this->full_path, '?') ? substr($this->full_path, 0, strpos($this->full_path, '?')) : $this->full_path;
         
@@ -96,6 +94,30 @@ class Request {
         } else if ( in_array($type, array('POST', 'GET', 'HEAD', 'PUT', 'DELETE')) ) { 
             $this->_method = strtolower($type);
         }
+    }
+    
+    /**
+     * Devuelve el detector de dispositivo
+     * @return MobileDetect
+     */
+    public function device() {
+        if ($this->_device === NULL) {
+            $this->_device = new MobileDetect();
+        }
+        
+        return $this->_device;
+    }
+    
+    /**
+     * Devuelve la clase de manejo de sesion
+     * @return Session
+     */
+    public function session() {
+        if ($this->_session === NULL) {
+            $this->_session = new Session();
+        }
+        
+        return $this->_session;
     }
     
     /**

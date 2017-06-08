@@ -19,7 +19,6 @@
 namespace PowerOn\Routing;
 use PowerOn\Utility\Inflector;
 use PowerOn\Controller\Controller;
-use PowerOn\Authorizer\UserCredentials;
 use PowerOn\Exceptions\DevException;
 use PowerOn\Network\Request;
 
@@ -52,46 +51,16 @@ class Router {
      * @var Request
      */
     private $_request;
+    /**
+     * AltoRouter class
+     * @var \AltoRouter
+     */
+    private $_altorouter;
     
-    /**
-     * Regular expression for action names
-     *
-     * @var string
-     */
-    const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
-    /**
-     * Regular expression for years
-     *
-     * @var string
-     */
-    const YEAR = '[12][0-9]{3}';
-    /**
-     * Regular expression for months
-     *
-     * @var string
-     */
-    const MONTH = '0[1-9]|1[012]';
-    /**
-     * Regular expression for days
-     *
-     * @var string
-     */
-    const DAY = '0[1-9]|[12][0-9]|3[01]';
-    /**
-     * Regular expression for auto increment IDs
-     *
-     * @var string
-     */
-    const ID = '[0-9]+';
-    /**
-     * Regular expression for UUIDs
-     *
-     * @var string
-     */
-    const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
-    
-    public function __construct(Request $request) {
+    public function __construct(Request $request, \AltoRouter $altorouter) {
         $this->_request = $request;        
+        $this->_altorouter = $altorouter;
+        
         $routes_file = PO_PATH_APP . DS . 'config' . DS . 'routes.php';
         if ( is_file($routes_file) ) {
             $this->_collections = include $routes_file;
@@ -143,11 +112,10 @@ class Router {
     /**
      * Verificamos si existen rutas apuntadas
      */
-    public function match() {
-        $router = new \AltoRouter();
+    private function match() {
         foreach ($this->_collections as $param => $route) {
-            $router->map('GET', $param, NULL);
-            if ( $router->match() ) {
+            $this->_altorouter->map('GET', $param, NULL, key_exists(2, $route) ? $route[2] : NULL);
+            if ( $this->_altorouter->match() ) {
                 if ( !key_exists(0, $route) || !key_exists(1, $route) ) {
                     throw new DevException(sprintf('La ruta encontrada esta mal configurada', $param), 
                             ['route' => $route, 'param' => $param]);
@@ -161,9 +129,14 @@ class Router {
     /**
      * Crea una URL nueva a partir de los datos entregados
      * @param array $url
+     * @param string $name [Opcional] Nombre de la url existente
      * @return string
      */
-    public function buildUrl( array $url = [] ) {
+    public function buildUrl( array $url = [], $name = NULL ) {
+        if ($name) {
+            return $this->_altorouter->generate($name, $url);
+        }
+        
         $vars = [];
         foreach ($url as $k => $u) {
             if ($k !== 'controller' && $k !== 'action' && $k !== 'query') {

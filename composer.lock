@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa44cc13da905bfd374368f12e6b8a53",
+    "content-hash": "4ec30d7c657336c5617f54de70ace27b",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -60,6 +60,51 @@
                 "routing"
             ],
             "time": "2015-11-30T00:47:43+00:00"
+        },
+        {
+            "name": "jstewmc/php-helpers",
+            "version": "v0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jstewmc/php-helpers.git",
+                "reference": "8e8882b4760b8368ecc4407fe1ba5034be187766"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jstewmc/php-helpers/zipball/8e8882b4760b8368ecc4407fe1ba5034be187766",
+                "reference": "8e8882b4760b8368ecc4407fe1ba5034be187766",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jstewmc\\PhpHelpers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jack Clayton",
+                    "email": "clayjs0@gmail.com"
+                }
+            ],
+            "description": "Static classes to help with numbers, strings, arrays, files, and bools in PHP",
+            "keywords": [
+                "array",
+                "boolean",
+                "file",
+                "helper",
+                "number",
+                "php",
+                "string"
+            ],
+            "time": "2014-09-09T22:24:03+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",

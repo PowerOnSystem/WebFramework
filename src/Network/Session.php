@@ -32,17 +32,14 @@ class Session {
      */
     public function destroy() {
         $_SESSION = [];
-        unset($_SESSION);
-        $session_name = session_name();
+        if ( ini_get("session.use_cookies") ) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
         session_destroy();
-        $session_cookie = isset($_COOKIE[$session_name]) && is_string($_COOKIE[$session_name]) ? TRUE : FALSE;
-        if ( $session_cookie ) {
-            setcookie(session_name(), '', time() - 3600, '/');
-        }
-        $remember_cookie = isset($_COOKIE['poweron_remember_user']) && is_string($_COOKIE['poweron_remember_user']) ? TRUE : FALSE;
-        if ( $remember_cookie ) {
-            setcookie('poweron_remember_user', NULL, -1, '/');
-        }
     }
     
     /**

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) Makuc Julian & Makuc Diego S.H.
+ * Copyright (C) PowerOn Sistemas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ class Sanitize {
      * @return string
      */
     public static function clearDecimal($value) {
-        return number_format(filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT), CNC_NUMBER_DECIMALS, CNC_NUMBER_DECIMAL_POINT, CNC_NUMBER_THOUSANDS_SEPARATOR);
+        return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
     }
     
     /**

@@ -20,11 +20,14 @@ namespace PowerOn\Application;
 use PowerOn\Routing\Dispatcher;
 use PowerOn\Exceptions\DevException;
 use PowerOn\Exceptions\ProdException;
+use PowerOn\Utility\Config;
+
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-if (DEV_ENVIRONMENT) {
-    $load_time = microtime(TRUE);
+if ( is_file(PO_PATH_CONFIG . DS . 'application.php') ) {
+    Config::initialize( PO_PATH_CONFIG . DS . 'application.php' );
 }
+
 //Pimple Container
 $container = new \Pimple\Container();
 include POWERON_ROOT . DS . 'Application' . DS . 'Configuration.php';
@@ -38,7 +41,7 @@ try {
     
     try {
         switch ( $dispatcher->handle() ) {
-            case Dispatcher::NOT_FOUND  : throw new ProdException('Sector no encontrado', 404); 
+            case Dispatcher::NOT_FOUND  : throw new ProdException(404, 'Sector no encontrado'); 
             case Dispatcher::FOUND      :
                 $dispatcher->controller->registerServices(
                         $container['View'], $container['Request'], $container['Router'], $container['Logger']);
@@ -70,7 +73,7 @@ try {
                 'trace' => $d->getTrace(),
                 'context' => $d->getContext()
             ]);
-            throw new ProdException('Ocurri&oacute; un problema y se puede continuar en este momento.', 409, $d);
+            throw new ProdException(409, 'Ocurri&oacute; un problema y se puede continuar en este momento.', $d);
         }
     }
 } catch (ProdException $p) {
@@ -102,8 +105,4 @@ try {
         echo 'Contactese con el webmaster para m&aacute;s detalles: ';
         echo '<a href="mailto:' . PO_WEBMASTER['email'] . '">' . PO_WEBMASTER['name'] . '</a>';
     }
-}
-
-if (DEV_ENVIRONMENT) {
-    echo '<p>Execution Time: ' . number_format(microtime(TRUE) - $load_time, 4) . '</p>';
 }

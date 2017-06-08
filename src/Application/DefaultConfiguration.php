@@ -16,9 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
+
 //PATHS POR DEFECTO
 defined('PO_PATH_ROOT') ?: define('PO_PATH_ROOT', '');
 defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT . DS . (DEV_ENVIRONMENT ? 'test' : 'app'));
+defined('PO_PATH_LANGS') ?: define('PO_PATH_LANGS', PO_PATH_APP . DS . 'langs');
 
 defined('PO_PATH_CONFIG') ?: define('PO_PATH_CONFIG', PO_PATH_APP . DS . 'config');
 defined('PO_PATH_MODULES') ?: define('PO_PATH_MODULES', PO_PATH_APP . DS . 'modules');
