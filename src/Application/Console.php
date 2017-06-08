@@ -26,7 +26,7 @@ class Console {
      * Establece el entorno de trabajo en modo produccion al 
      * solicitarlo como requisito en composer
      */
-    public static function postInstall() {
+    public static function postUpdate() {
         $self = dirname(__FILE__);
         $configFile = $self . DIRECTORY_SEPARATOR . 'DefaultConfiguration.php';
         $arrayFile = file($configFile);

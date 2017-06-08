@@ -14,7 +14,7 @@
         }
     ],
     "scripts": {
-        "post-install-cmd": "PowerOn\\Console::postInstall"
+        "post-update-cmd": "PowerOn\\Application\\Console::postUpdate"
     },
     "require": {
         "php": ">=5.4",
