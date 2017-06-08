@@ -73,6 +73,7 @@ class View {
     public function initialize() {
         $this->helpers = $this->buildHelpers( new \Pimple\Container );
     }
+    
     //VERIFICAR PORQUE NO ME GUSTA NADA
     public function buildHelpers(\Pimple\Container $container) {
         $container['html'] = function() {

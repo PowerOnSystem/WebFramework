@@ -111,7 +111,13 @@ class HtmlHelper extends Helper {
      * @return string La etiqueta formateada
      */
     public function meta($name, $content) {
-        return '<meta name="' . $name . '" content="' . $content . '" />' . PHP_EOL;
+        if ( $name ) {
+            $this->_meta[$name] = ['name' => $name, 'content' => $content];
+        } else {
+            return implode(PHP_EOL, array_map(function($meta) {
+                return '<meta name="' . $meta['name'] . '" content="' . $meta['content'] . '" />';
+            }, $this->_meta));
+        }
     }
     
     /**

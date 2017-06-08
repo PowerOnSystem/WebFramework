@@ -27,12 +27,6 @@ use PowerOn\View\View;
  * @copyright (c) 2016, Lucas Sosa
  */
 class Helper {
-
-    /**
-     * Helpers utilizados por otros helpers
-     * @var array
-     */
-    protected $_helpers = [];
     /**
      * Router del framework
      * @var \PowerOn\Routing\Router
