@@ -18,6 +18,6 @@
  */
 
 //Si esta bien configurada la carpeta de la aplicacion
-if ( !is_file(PO_PATH_APP) ) {
+if ( !is_dir(PO_PATH_APP) ) {
     throw new \Exception(sprintf('No existe la carpeta de la aplicaci&oacute;n configurada en (%s)', PO_PATH_APP));
 }
