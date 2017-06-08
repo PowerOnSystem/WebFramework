@@ -22,8 +22,9 @@ use PowerOn\Exceptions\DevException;
 use PowerOn\Exceptions\ProdException;
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-$load_time = microtime(TRUE);
-
+if (PO_DEVELOPER_MODE) {
+    $load_time = microtime(TRUE);
+}
 //Pimple Container
 $container = new \Pimple\Container();
 include POWERON_ROOT . DS . 'Application' . DS . 'Configuration.php';
