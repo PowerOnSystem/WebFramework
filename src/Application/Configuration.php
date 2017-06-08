@@ -21,7 +21,7 @@
 
 $container['Logger'] = function() {
     $logger = new Monolog\Logger('PowerOn');
-    if ( PO_DEVELOPER_MODE ) {
+    if ( DEV_ENVIRONMENT ) {
         $handler = new \Monolog\Handler\BrowserConsoleHandler();
         $formatter = new Monolog\Formatter\LineFormatter('%level_name% > %message%');
         $handler->setFormatter($formatter);

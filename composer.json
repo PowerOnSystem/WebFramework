@@ -13,9 +13,6 @@
             "role": "Developer"
         }
     ],
-    "scripts": {
-        "post-update-cmd": "PowerOn\\Application\\Console::postUpdate"
-    },
     "require": {
         "php": ">=5.4",
         "mobiledetect/mobiledetectlib": "^2.8",

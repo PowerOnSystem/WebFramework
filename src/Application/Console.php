@@ -27,14 +27,6 @@ class Console {
      * solicitarlo como requisito en composer
      */
     public static function postUpdate() {
-        $self = dirname(__FILE__);
-        $configFile = $self . DIRECTORY_SEPARATOR . 'DefaultConfiguration.php';
-        $arrayFile = file($configFile);
-        $position = array_search("define('PO_DEVELOPER_MODE', TRUE);" . PHP_EOL, $arrayFile);
-        if ( $position !== FALSE ) {
-            $arrayFile[$position] = "define('PO_DEVELOPER_MODE', FALSE);" . PHP_EOL;
-            $file = fopen($configFile, 'w');
-            fwrite($file, implode('', $arrayFile));
-        }
+
     }
 }

@@ -22,7 +22,7 @@ use PowerOn\Exceptions\DevException;
 use PowerOn\Exceptions\ProdException;
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-if (PO_DEVELOPER_MODE) {
+if (DEV_ENVIRONMENT) {
     $load_time = microtime(TRUE);
 }
 //Pimple Container
@@ -48,7 +48,7 @@ try {
                         ['dispatcher_result' => $dispatcher->result]);
         }
     } catch (DevException $d) {
-        if ( PO_DEVELOPER_MODE ) {
+        if ( DEV_ENVIRONMENT ) {
             echo '<h1>' . $d->getMessage() . '</h1>';
             echo '<h4>' . $d->getFile() . ' ('. $d->getLine() . ')</h4>';
             echo '<h5>DEBUG:</h5>';
@@ -79,7 +79,7 @@ try {
     $dispatcher->controller->registerException($p);
     $dispatcher->run($container['View'], 'error');
 } catch (\Exception $e) {
-    if (PO_DEVELOPER_MODE) {
+    if (DEV_ENVIRONMENT) {
         echo '<h1>' . $e->getMessage() . '</h1>';
         echo '<h4>' . $e->getFile() . ' ('. $e->getLine() . ')</h4>';
         echo '<h5>TRACE:</h5>';
@@ -104,6 +104,6 @@ try {
     }
 }
 
-if (PO_DEVELOPER_MODE) {
+if (DEV_ENVIRONMENT) {
     echo '<p>Execution Time: ' . number_format(microtime(TRUE) - $load_time, 4) . '</p>';
 }

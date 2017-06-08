@@ -50,17 +50,6 @@ class View {
      * @var \Pimple\Container
      */
     public $helpers;
-
-    /**
-     * Errores
-     * @var array 
-     */
-    public $errors = [];
-    /**
-     * Alertas
-     * @var array 
-     */
-    public $warnings = [];
     
     /**
      * Constructor de la clase View
@@ -68,6 +57,9 @@ class View {
      */
     public function initialize() {}
 
+    /**
+     * Crea los Helpers por defecto del framework
+     */
     public function buildHelpers() {
         $this->helpers = new \Pimple\Container();
         $this->helpers['html'] = function() {
@@ -89,8 +81,7 @@ class View {
     
     /**
      * Carga un Helper
-     * @param string $name
-     * @return Helper
+     * @param string $name El nombre a utilizar
      * @throws DevException
      */
     public function loadHelper($name) {
@@ -131,9 +122,12 @@ class View {
             include $path;
             $this->content = ob_get_clean();
         } catch (\RuntimeException $e) {
-            $this->content = ob_get_clean();
+            //$this->content = ob_get_clean();
             throw new DevException(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));            
+        }  catch (\Exception $e) {
+            ob_get_clean();
         }
+        
 
         $path_layout = PO_PATH_TEMPLATES . DS . 'layout' . DS . ($this->layout ? $this->layout : 'default') . '.phtml';
         if ( !is_file($path_layout) ) {
@@ -184,18 +178,12 @@ class View {
      * Configura la salida de datos para ser tratados
      *  por el navegador en formato json
      */
-    public function ajax() {
-        $data = array(
-            'data' => $this->data,
-            'errors' => $this->errors,
-            'warning' => $this->warnings
-        );
-        
+    public function ajax() {        
         if ( !headers_sent() ) {
             header('Content-Type: application/json');
         }
         
-        echo json_encode($data);
+        echo json_encode($this->data);
     }
     
     /**
@@ -229,33 +217,5 @@ class View {
             return $this->helpers[$name];
         }
         return NULL;
-    }
-    
-    /**
-     * Agrega un error a la plantilla
-     * @param string $title Titulo del error
-     * @param string $message El mensaje del error
-     * @param integer $code [Opcional] Codigo de error
-     * @param string $type [Opcional] Tipo de error
-     */
-    public function error($title, $message, $code = 0, $type = NULL) {
-        $this->errors[] = [
-            'code' => $code,
-            'title' => $title,
-            'message' => $message,
-            'type' => $type
-        ];
-    }
-    
-    /**
-     * Agrega una advertencia a la plantilla
-     * @param string $title El titulo
-     * @param string $message El mensaje
-     */
-    public function warning($title, $message) {
-        $this->warnings[] = [
-            'title' => $title,
-            'message' => $message
-        ];
     }
 }
