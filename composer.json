@@ -30,7 +30,7 @@
             "src/Application/Bootstrap.php"
         ]
     },
-    "minimum-stability": "1.0.0",
+    "minimum-stability": "stable",
     "repositories": [
         {
             "type": "vcs",
