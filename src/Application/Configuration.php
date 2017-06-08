@@ -54,6 +54,7 @@ $container['View'] = function() {
         $view = new \App\View\AppView();
     }
     
+    $view->buildHelpers();
     $view->initialize();
     
     return $view;

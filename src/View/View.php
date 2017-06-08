@@ -50,11 +50,7 @@ class View {
      * @var \Pimple\Container
      */
     public $helpers;
-    /**
-     * Configuracion
-     * @var array
-     */
-    public $config = [];
+
     /**
      * Errores
      * @var array 
@@ -70,29 +66,25 @@ class View {
      * Constructor de la clase View
      * Controla todos los templates
      */
-    public function initialize() {
-        $this->helpers = $this->buildHelpers( new \Pimple\Container );
-    }
-    
-    //VERIFICAR PORQUE NO ME GUSTA NADA
-    public function buildHelpers(\Pimple\Container $container) {
-        $container['html'] = function() {
+    public function initialize() {}
+
+    public function buildHelpers() {
+        $this->helpers = new \Pimple\Container();
+        $this->helpers['html'] = function() {
             $helper = new \PowerOn\View\Helper\HtmlHelper();
-            $helper->initialize();
+            $helper->initialize($this);
             return $helper;
-        };
-        $container['block'] = function() {
+        };        
+        $this->helpers['block'] = function() {
             $helper = new \PowerOn\View\Helper\BlockHelper();
-            $helper->initialize();
+            $helper->initialize($this);
             return $helper;
         };
-        $container['form'] = function() {
+        $this->helpers['form'] = function() {
             $helper = new \PowerOn\View\Helper\FormHelper();
-            $helper->initialize();
+            $helper->initialize($this);
             return $helper;
         };
-        
-        return $container;
     }
     
     /**
@@ -102,28 +94,24 @@ class View {
      * @throws DevException
      */
     public function loadHelper($name) {
-        if ( !key_exists($name, $this->config['helper']) ) {
-            throw new DevException(sprintf('El Helper (%s) que intenta cargar no existe.', $name), 
-                    ['helpers' => $this->config['helper']]);
+        $helper_file = PO_PATH_HELPER . DS . Inflector::classify($name) . 'Helper.php';
+        if ( !is_file($helper_file) ) {
+            throw new DevException(sprintf('No se encuentra el Helper (%s) en (%s)', $name, $helper_file));
         }
+        $helper_class = 'App\View\Helper\\' . Inflector::classify($name) . 'Helper';
         
-        if ( !key_exists($name, $this->helpers) ) {
-            $helper_file = PO_PATH_HELPER . DS . Inflector::classify($name) . 'Helper.php';
-            if ( !is_file($helper_file) ) {
-                throw new DevException(sprintf('No se encuentra el Helper (%s) en (%s)', $name, $helper_file));
+        $this->helpers[$name] = function() use ($helper_file, $helper_class) {
+            include_once $helper_file;
+         
+            if ( !class_exists($helper_class) ) {
+                throw new DevException(sprintf('No se encuentra la clase(%s)', $helper_class));
             }
-            if ( !class_exists($this->config['helper'][$name]) ) {
-                throw new DevException(sprintf('No se encuentra la clase(%s)', $this->config['helper'][$name]));
-            }
-            /* @var $helper Helper\Helper */
-            $helper = new $this->config['helper'][$name]();
+            
+            $helper = new $helper_class();
             $helper->initialize($this);
             
-            $this->helpers[$name] = $helper;
-            $this->{ $name } = $helper;
-        }
-        
-        return $this->helpers[$name];
+            return $helper;
+        };
     }
     
     /**
