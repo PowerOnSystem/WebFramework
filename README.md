@@ -12,7 +12,10 @@
 </p>
 
 WebFramework es un framework basado en la tecnología de CakePHP 3 simplificada para uso exclusivo en desarrollo de páginas web.
-Se busca facilitar la navegación del usuario y obtener una estructura de página sólida, rápida y eficaz.
+Se busca facilitar la navegación del usuario y obtener una estructura de página sólida, rápida y sensilla.
+
+Con tan solo incluir las librerias en tu proyecto tiene acceso a las herramientas principales del framework que facilitan el
+desarrollo de páginas simples.
 
 ## Instalación vía Composer
 
@@ -24,3 +27,6 @@ de guía para tu desarrollo, si lo querés instalar en un proyecto iniciado pod�
 ``` bash
 $ composer require poweronsystem/webframework: "dev-master"
 ```
+## Requisitos
+
+PHP >= 5.4
