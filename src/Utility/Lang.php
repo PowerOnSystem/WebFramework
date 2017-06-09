@@ -41,10 +41,10 @@ class Lang {
      */
     public static function load($name, $request_lang = NULL) {
         $lang = $request_lang ? $request_lang : (Config::exist('Global.lang') ? Config::get('Global.lang') : 'es');
-        
-        if ( Hash::check(self::$_collection, $name . '.' . $lang) ) {
+
+        if ( !Hash::check(self::$_collection, $name . '.' . $lang) ) {
             $lang_file = PO_PATH_LANGS . DS . $name . '.' . $lang . '.php';
-            
+
             if ( !is_file($lang_file) ) {
                 return NULL;
             }
@@ -53,17 +53,27 @@ class Lang {
             if ( !is_array($lang_array) ) {
                 throw new DevException(sprintf('El archivo (%s) debe retornar un array', $lang_file), ['return' => $lang_array]);
             }
-            
-            Hash::insert(self::$_collection, $name . '.' . $lang, $lang_array);
+
+            self::$_collection = Hash::insert(self::$_collection, $name . '.' . $lang, $lang_array);
         }
-        
+
         return self::$_collection[$name][$lang];
     }
     
+    /**
+     * Devuelve una cadena en un idioma específico
+     * @param string $name Nombre de la cadena a obtener
+     * @param string $request_lang [Opcional] El idioma específico a obtener
+     * @return string La cadena en el idimoa requerido
+     */
     public static function get($name, $request_lang = NULL) {
-        $lang_name = explode('.', $name);
-        self::load(reset($lang_name), $request_lang);
-        return Hash::get(self::$_collection, $name);
+        $lang_name = $request_lang ? $request_lang : (Config::exist('Global.lang') ? Config::get('Global.lang') : 'es');
+        $lang_split = explode('.', $name);
+        $file_string = next($lang_split);
+        $file_name = reset($lang_split);
+
+        self::load($file_name, $request_lang);
+        return Hash::get(self::$_collection, $file_name . '.' . $lang_name . '.' . $file_string);
     }
 
 }

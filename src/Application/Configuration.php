@@ -49,7 +49,7 @@ $container['Dispatcher'] = function($c) {
     return new \PowerOn\Routing\Dispatcher($c['Router'], $c['Request']);
 };
 
-$container['View'] = function() {
+$container['View'] = function($c) {
     $view_file = PO_PATH_VIEW . DS . 'AppView.php';
     if ( !is_file($view_file) ) {
         $view = new PowerOn\View\View();
@@ -58,8 +58,10 @@ $container['View'] = function() {
         $view = new \App\View\AppView();
     }
     
-    $view->buildHelpers();
+    $view->buildHelpers($c);
     $view->initialize();
     
     return $view;
 };
+
+\PowerOn\Form\Form::registerServices($container['Request']);

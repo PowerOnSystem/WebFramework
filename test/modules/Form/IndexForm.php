@@ -16,27 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace CNCService\View\Widget;
+namespace App\Form;
+use PowerOn\Form\Form;
 
 /**
- * HiddenWidget
+ * IndexForm
  * @author Lucas Sosa
  * @version 0.1
- * @copyright (c) 2016, Lucas Sosa
  */
-class UrlWidget extends BasicWidget {
+class IndexForm extends Form {
 
-    public function __construct(array $params) {
-        parent::__construct($params);
+    protected function _buildSchema(\PowerOn\Form\Schema $schema) {
+        $schema->add('file', 'file');
+        
+        return $schema;
     }
     
-    public function _renderElement() {
-        $r = '<div class = "ui input left labeled">';
-            $r .= '<div class = "ui label">http://</div>';
-            $r .= '<input ' . $this->serialize() . ' />';
-        $r .= '</div>';
-        
-        return $r;
+    protected function _execute(array $values) {
+        return TRUE;
     }
+
 }

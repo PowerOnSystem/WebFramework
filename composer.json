@@ -19,7 +19,7 @@
         "monolog/monolog": "^1.22",
         "altorouter/altorouter": "^1.2",
         "pimple/pimple": "^3.0",
-        "jstewmc/php-helpers": "^0.1.1"
+        "fightbulc/moment": "^1.26"
     },
     "autoload": {
         "psr-4": {

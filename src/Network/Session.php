@@ -59,6 +59,7 @@ class Session {
      */
     public function write($name, $value) {
         $_SESSION = Hash::write($_SESSION, $name, $value);
+        return $value;
     }
     
     /**
@@ -68,6 +69,7 @@ class Session {
      */
     public function push($name, $value) {
         $_SESSION = Hash::insert($_SESSION, $name, $value);
+        return $value;
     }
     
     /**

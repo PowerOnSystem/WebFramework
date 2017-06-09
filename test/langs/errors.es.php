@@ -1,7 +1,6 @@
 <?php
-
 /*
- * Copyright (C) Makuc Julian & Makuc Diego S.H.
+ * Copyright (C) PowerOn Sistemas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,27 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace CNCService\View\Widget;
-
-/**
- * HiddenWidget
- * @author Lucas Sosa
- * @version 0.1
- * @copyright (c) 2016, Lucas Sosa
- */
-class ButtonWidget extends BasicWidget {
-
-    public function __construct(array $params) {
-        parent::__construct($params);
-    }
-    
-    public function _renderElement() {
-        $this->class .= ' ui button';
-        return '<button ' . $this->serialize() . ' >' . $this->_title . '</button>';
-    }
-    
-    public function _renderField() {
-        return $this->renderElement();
-    }
-}
+return [
+    100 => 'Los datos no se recibieron correctamente',
+    101 => 'El formulario que intenta enviar expir&oacute;',
+    404 => 'Sector no encontrado',
+    409 => 'Ocurri&oacute; un problema y se puede continuar en este momento.'
+];

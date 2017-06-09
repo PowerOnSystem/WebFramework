@@ -24,6 +24,21 @@ use PowerOn\Utility\Config;
 
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
+//Autoloader de la aplicación
+spl_autoload_register(function($classname){
+    if ( class_exists($classname) ) {
+        return FALSE;
+    }
+    $split = explode('\\', $classname);
+    $folder = array_shift($split);
+    if ( $folder == 'App' ) {
+        $path = PO_PATH_MODULES . DS . implode(DS, $split) . '.php';
+        if ( is_file($path) ) {
+            require $path;
+        }
+    }
+});
+
 if ( is_file(PO_PATH_CONFIG . DS . 'application.php') ) {
     Config::initialize( PO_PATH_CONFIG . DS . 'application.php' );
 }
@@ -41,7 +56,7 @@ try {
     
     try {
         switch ( $dispatcher->handle() ) {
-            case Dispatcher::NOT_FOUND  : throw new ProdException(404, 'Sector no encontrado'); 
+            case Dispatcher::NOT_FOUND  : throw new ProdException(404); 
             case Dispatcher::FOUND      :
                 $dispatcher->controller->registerServices(
                         $container['View'], $container['Request'], $container['Router'], $container['Logger']);
@@ -73,7 +88,7 @@ try {
                 'trace' => $d->getTrace(),
                 'context' => $d->getContext()
             ]);
-            throw new ProdException(409, 'Ocurri&oacute; un problema y se puede continuar en este momento.', $d);
+            throw new ProdException(409, 'Developer environment exception.', $d);
         }
     }
 } catch (ProdException $p) {

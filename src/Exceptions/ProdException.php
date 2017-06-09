@@ -25,18 +25,26 @@ use PowerOn\Utility\Lang;
  * @version 0.1
  */
 class ProdException extends \Exception {
+    /**
+     * Mensaje para el desarrollador
+     * @var string
+     */
+    private $_debug_message;
     
-    private $debug_message;
     /**
      * Contempla los errores de programación
      * @param integer $code Código de error
-     * @param string $message [Opcional] Mensaje a enviar al desarrollador
+     * @param string $debug_message [Opcional] Mensaje a enviar al desarrollador
      * @param \Exception $exception [Opcional] Excepcion anterior
      */
-    public function __construct($code = NULL, $message = '', \Exception $exception = NULL) {
-        $this->debug_message = $message;
+    public function __construct($code = NULL, $debug_message = '', \Exception $exception = NULL) {
+        $this->_debug_message = $debug_message;
         $message = Lang::get('errors.' . $code);
-
+        
         parent::__construct($message ? $message : 'No es posible continuar con la operaci&oacute;n', $code, $exception);
+    }
+    
+    public function getDebugMessage() {
+        return $this->_debug_message;
     }
 }

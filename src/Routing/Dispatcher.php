@@ -85,7 +85,7 @@ class Dispatcher {
      */
     public function run(View $view, $force_action = NULL) {
         //Cargamos la plantilla por defecto
-        $view->setTemplate($this->_router->action, $this->_router->controller);
+        $view->setTemplate($force_action ? $force_action : $this->_router->action, $this->_router->controller);
 
         //Si todo esta OK lanzamos la acción final
         if ( $force_action && !method_exists($this->controller, $force_action) ) {
@@ -94,7 +94,7 @@ class Dispatcher {
             throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
                     $force_action, $reflection->getName()), ['controller' => $this->controller]);
         }
-        
+
         $this->controller->{ $force_action ? $force_action : $this->_router->action }();
         
         if ( $this->_request->is('ajax') ) {

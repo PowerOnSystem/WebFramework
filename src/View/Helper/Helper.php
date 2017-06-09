@@ -18,7 +18,6 @@
  */
 
 namespace PowerOn\View\Helper;
-use PowerOn\View\View;
 
 /**
  * Helper Contenedor de helpers del framework
@@ -39,12 +38,20 @@ class Helper {
     protected $_request;
     /**
      * Instancia de view donde se utiliza el helper
-     * @var View
+     * @var \PowerOn\View\View
      */
     private $_view;
     
-    public function initialize(View $view) {
+    /**
+     * Inicializa el helper
+     * @param \PowerOn\View\Helper\PowerOn\View\View $view
+     * @param \PowerOn\View\Helper\PowerOn\Routing\Router $router
+     * @param \PowerOn\Network\Request $request
+     */
+    public function initialize(\PowerOn\View\View $view, \PowerOn\Routing\Router $router, \PowerOn\Network\Request $request) {
         $this->_view = $view;
+        $this->_router = $router;
+        $this->_request = $request;
     }
     
     /**

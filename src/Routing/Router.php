@@ -165,8 +165,7 @@ class Router {
      * @return string
      */
     public function modifyUrl(array $add = [], array $remove = [], $controller = NULL, $action = NULL) {
-        $path = explode('/', $this->_request->url);
-        
+        $path = explode('/', $this->_request->path);
         $gets_remove = key_exists('query', $remove) ? $remove['query'] : [];
         if (key_exists('query', $remove)) {
             unset($remove['query']);

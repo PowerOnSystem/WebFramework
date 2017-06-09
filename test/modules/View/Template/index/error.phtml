@@ -17,8 +17,5 @@
  */
 
 /* @var $this PowerOn\View\View */
+var_dump($this->errors);
 ?>
-<?php foreach ( $this->errors as $error ) : ?>
-<h1><?= $error['title'] ?> <?= $error['code'] ?></h1>
-<h3><?= $error['message'] ?></h3>
-<?php endforeach ?>

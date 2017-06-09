@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ec30d7c657336c5617f54de70ace27b",
+    "content-hash": "f34f193274abbec41948f97c4b3a27ac",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -62,18 +62,21 @@
             "time": "2015-11-30T00:47:43+00:00"
         },
         {
-            "name": "jstewmc/php-helpers",
-            "version": "v0.1.1",
+            "name": "fightbulc/moment",
+            "version": "1.26.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jstewmc/php-helpers.git",
-                "reference": "8e8882b4760b8368ecc4407fe1ba5034be187766"
+                "url": "https://github.com/fightbulc/moment.php.git",
+                "reference": "cdd7e35a03d2fe13e8d050c9526eaeea241f9b0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jstewmc/php-helpers/zipball/8e8882b4760b8368ecc4407fe1ba5034be187766",
-                "reference": "8e8882b4760b8368ecc4407fe1ba5034be187766",
+                "url": "https://api.github.com/repos/fightbulc/moment.php/zipball/cdd7e35a03d2fe13e8d050c9526eaeea241f9b0e",
+                "reference": "cdd7e35a03d2fe13e8d050c9526eaeea241f9b0e",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.2.*"
@@ -81,7 +84,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Jstewmc\\PhpHelpers\\": "src/"
+                    "Moment\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -90,21 +93,36 @@
             ],
             "authors": [
                 {
-                    "name": "Jack Clayton",
-                    "email": "clayjs0@gmail.com"
+                    "name": "Ashish Tilara",
+                    "email": "ashish@itcutives.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Jaroslaw Kozak",
+                    "email": "jaroslaw.kozak68@gmail.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Tino Ehrich",
+                    "email": "tino@bigpun.me",
+                    "role": "developer"
                 }
             ],
-            "description": "Static classes to help with numbers, strings, arrays, files, and bools in PHP",
+            "description": "Parse, validate, manipulate, and display dates in PHP w/ i18n support. Inspired by moment.js",
             "keywords": [
-                "array",
-                "boolean",
-                "file",
-                "helper",
-                "number",
-                "php",
-                "string"
+                "date",
+                "display",
+                "format",
+                "i18n",
+                "locale",
+                "manipulate",
+                "moment",
+                "parse",
+                "time",
+                "translation",
+                "validate"
             ],
-            "time": "2014-09-09T22:24:03+00:00"
+            "time": "2017-05-15T09:09:18+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",

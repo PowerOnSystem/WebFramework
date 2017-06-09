@@ -29,7 +29,17 @@ use PowerOn\Controller\Controller;
 class IndexController extends Controller {
 
     public function index() {
+        $form = new \App\Form\IndexForm();
         
+        if ( $this->request->is('post') ) {
+            if ( $form->execute($this->request->getData()) ) {
+                echo 'Enviado correctamente';
+            } else {
+                echo 'No se envió nada';
+            }
+        }
+        
+        $this->view->set('testform', $form);
     }
 
     public function error() {

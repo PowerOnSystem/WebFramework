@@ -18,6 +18,7 @@
 
 namespace PowerOn\Network;
 use Detection\MobileDetect;
+use PowerOn\Exceptions\ProdException;
 
 /**
  * Maneja la solicitud del cliente
@@ -61,12 +62,22 @@ class Request {
      * @var string
      */
     public $full_path;
+    /**
+     * Controlador solicitado por url
+     * @var string
+     */
+    public $controller;
+    /**
+     * Accion solicitada por url
+     * @var string
+     */
+    public $action;
     
 
     public function __construct() {
         $this->full_path = $this->server('REQUEST_URI');
-        $this->path = strpos($this->full_path, '?') ? substr($this->full_path, 0, strpos($this->full_path, '?')) : $this->full_path;
-        
+        $path = strpos($this->full_path, '?') ? substr($this->full_path, 0, strpos($this->full_path, '?')) : $this->full_path;
+                
         $query_strings = filter_input_array(INPUT_GET, FILTER_SANITIZE_ENCODED);
         
         $this->_get = $query_strings ? array_map(function($value) {
@@ -76,13 +87,19 @@ class Request {
         
         $url = array_filter(array_map(function($value) {
             return htmlentities(urldecode($value));
-        }, explode('/', $this->path)));
+        }, explode('/', $path)));
         
         if ( in_array(PO_PATH_ROOT, $url, TRUE) ) {
             array_shift($url);
         }
 
+        $controller = array_shift($url);
+        $action = array_shift($url);
+        $this->controller = $controller ? $controller : 'index';
+        $this->action = $action ? $action : 'index';
+        
         $this->_url = array_values($url);
+        $this->path = implode('/', $url);
 
         $type = $this->server('REQUEST_METHOD');
         $ajax = strtolower(filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH', FILTER_DEFAULT));

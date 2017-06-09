@@ -58,7 +58,7 @@ class Config {
      * @return mix El valor solicitado o NULL caso contrario
      */
     public static function get($name) {
-        return key_exists($name, self::$_config) ? Hash::get(self::$_config, $name) : NULL;
+        return Hash::check(self::$_config, $name) ? Hash::get(self::$_config, $name) : NULL;
     }
     
     /**

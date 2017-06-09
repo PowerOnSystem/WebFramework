@@ -52,6 +52,9 @@ class Hash {
      */
     private static function _intersect(array $array1, array $array2) {
         $array = array_intersect_key($array1, $array2);
+        if (empty($array)) {
+            return NULL;
+        }
         foreach ($array as $key => &$value) {
             if ( is_array($value) && is_array($array2[$key]) ) {
                 $value = self::_intersect($value, $array2[$key]);

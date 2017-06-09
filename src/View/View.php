@@ -56,25 +56,25 @@ class View {
      * Controla todos los templates
      */
     public function initialize() {}
-
+    
     /**
      * Crea los Helpers por defecto del framework
      */
-    public function buildHelpers() {
-        $this->helpers = new \Pimple\Container();
-        $this->helpers['html'] = function() {
+    public function buildHelpers(\Pimple\Container $container) {
+        $this->helpers = $container;
+        $this->helpers['html'] = function($c) {
             $helper = new \PowerOn\View\Helper\HtmlHelper();
-            $helper->initialize($this);
+            $helper->initialize($this, $c['Router'], $c['Request']);
             return $helper;
         };        
-        $this->helpers['block'] = function() {
+        $this->helpers['block'] = function($c) {
             $helper = new \PowerOn\View\Helper\BlockHelper();
-            $helper->initialize($this);
+            $helper->initialize($this, $c['Router'], $c['Request']);
             return $helper;
         };
-        $this->helpers['form'] = function() {
+        $this->helpers['form'] = function($c) {
             $helper = new \PowerOn\View\Helper\FormHelper();
-            $helper->initialize($this);
+            $helper->initialize($this, $c['Router'], $c['Request']);
             return $helper;
         };
     }
@@ -91,7 +91,7 @@ class View {
         }
         $helper_class = 'App\View\Helper\\' . Inflector::classify($name) . 'Helper';
         
-        $this->helpers[$name] = function() use ($helper_file, $helper_class) {
+        $this->helpers[$name] = function($c) use ($helper_file, $helper_class) {
             include_once $helper_file;
          
             if ( !class_exists($helper_class) ) {
@@ -99,7 +99,7 @@ class View {
             }
             
             $helper = new $helper_class();
-            $helper->initialize($this);
+            $helper->initialize($this, $c);
             
             return $helper;
         };
