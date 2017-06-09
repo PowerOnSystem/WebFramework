@@ -9,7 +9,7 @@
     <a href="https://packagist.org/packages/cakephp/cakephp" target="_blank">
         <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/cakephp/cakephp.svg?style=flat-square&label=stable">
     </a>
-    [![License](https://poser.pugx.org/poweronsystem/webframework/license)](https://packagist.org/packages/poweronsystem/webframework)
+    [[License](https://poser.pugx.org/poweronsystem/webframework/license)](https://packagist.org/packages/poweronsystem/webframework)
 </p>
 
 WebFramework es un framework basado en la tecnología de CakePHP 3 simplificada para uso exclusivo en desarrollo de páginas web.
