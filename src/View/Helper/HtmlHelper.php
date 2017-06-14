@@ -63,7 +63,7 @@ class HtmlHelper extends Helper {
                     )
             )) : $url
         ) + $options;
-        return '<a ' . html_serialize($cfg) . ' >' . $content . '</a>';
+        return '<a ' . html_serialize($cfg) . ' >' . $content . '</a>' . PHP_EOL;
     }
         
     /**
@@ -80,7 +80,7 @@ class HtmlHelper extends Helper {
         } else {
             return implode(PHP_EOL, array_map(function($value) {
                 return '<script ' . html_serialize($value) . '></script>';
-            }, $this->_js));
+            }, $this->_js)) . PHP_EOL;
         }
     }
     
@@ -100,7 +100,7 @@ class HtmlHelper extends Helper {
         } else {
             return implode(PHP_EOL, array_map(function($file) {
                 return '<link ' . html_serialize($file) . ' />';
-            }, $this->_css));
+            }, $this->_css)) . PHP_EOL;
         }
     }
     
@@ -116,7 +116,7 @@ class HtmlHelper extends Helper {
         } else {
             return implode(PHP_EOL, array_map(function($meta) {
                 return '<meta name="' . $meta['name'] . '" content="' . $meta['content'] . '" />';
-            }, $this->_meta));
+            }, $this->_meta)) . PHP_EOL;
         }
     }
     
@@ -132,6 +132,6 @@ class HtmlHelper extends Helper {
             'class' => ''
         ];
         
-        return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . html_serialize($cfg) . ' />';
+        return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . html_serialize($cfg) . ' />' . PHP_EOL;
     }
 }
