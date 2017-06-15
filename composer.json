@@ -1,6 +1,5 @@
 {
     "name": "poweronsystem/webframework",
-    "version": "dev-master",
     "description": "Framework for web design.",
     "keywords": ["framework", "web design", "web utilities"],
     "homepage": "https://github.com/poweronsystem/webframework",
@@ -30,12 +29,5 @@
             "src/Application/Functions.php",
             "src/Application/Bootstrap.php"
         ]
-    },
-    "minimum-stability": "stable",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/PowerOnSystem/WebFramework.git"
-        }
-    ]
+    }
 }
