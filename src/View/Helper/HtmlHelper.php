@@ -51,7 +51,7 @@ class HtmlHelper extends Helper {
      * @return string una etiqueta a
      */
     public function link($content, $url = [], array $options = []) {
-        $cfg = array(
+        $cfg = [
             'href' => is_array($url) ? (
                 key_exists('push', $url) ? $this->_router->pushUrl($url['push']) : (
                 key_exists('add', $url) || key_exists('remove', $url) ? 
@@ -61,8 +61,8 @@ class HtmlHelper extends Helper {
                     ) : (
                         key_exists('mailto', $url) ? 'mailto:' . $url['mailto'] : $this->_router->buildUrl($url)
                     )
-            )) : $url
-        ) + $options;
+            )) : ( $this->_router->routeExist($url) ? $this->_router->buildUrl([], $url) : $url )
+        ] + $options;
         return '<a ' . html_serialize($cfg) . ' >' . $content . '</a>' . PHP_EOL;
     }
         

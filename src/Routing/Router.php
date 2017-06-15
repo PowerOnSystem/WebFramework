@@ -126,6 +126,14 @@ class Router {
         }
     }
     
+    public function routeExist($name) {
+        try {
+            return $this->_altorouter->generate($name);
+        } catch (\Exception $e) {
+            return FALSE;
+        }
+    }
+    
     /**
      * Crea una URL nueva a partir de los datos entregados
      * @param array $url
