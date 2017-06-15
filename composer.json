@@ -1,5 +1,6 @@
 {
     "name": "poweronsystem/webframework",
+    "type": "library",
     "description": "Framework for web design.",
     "keywords": ["framework", "web design", "web utilities"],
     "homepage": "https://github.com/poweronsystem/webframework",
