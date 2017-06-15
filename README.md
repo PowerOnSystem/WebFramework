@@ -25,7 +25,7 @@ recomiendo que uses el Template [WebTemplate](https://github.com/PowerOnSystem/W
 de guía para tu desarrollo, si lo querés instalar en un proyecto iniciado podés a travéz de la consola:
 
 ``` bash
-$ composer require poweronsystem/webframework: "dev-master"
+$ composer require poweronsystem/webframework: "0.1.0"
 ```
 ## Requisitos
 
