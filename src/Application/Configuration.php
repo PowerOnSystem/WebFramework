@@ -41,12 +41,12 @@ $container['AltoRouter'] = function() {
     return new AltoRouter();
 };
 
-$container['Router'] = function($c) {
-    return new \PowerOn\Routing\Router($c['Request'], $c['AltoRouter']);
+$container['Dispatcher'] = function($c) {
+    return new \PowerOn\Routing\Dispatcher($c['AltoRouter'], $c['Request']);
 };
 
-$container['Dispatcher'] = function($c) {
-    return new \PowerOn\Routing\Dispatcher($c['Router'], $c['Request']);
+$container['CSRFProtection'] = function($c) {
+    return new \PowerOn\Form\CSRFProtection($c['Request']);
 };
 
 $container['View'] = function($c) {
@@ -63,5 +63,3 @@ $container['View'] = function($c) {
     
     return $view;
 };
-
-\PowerOn\Form\Form::registerServices($container['Request']);

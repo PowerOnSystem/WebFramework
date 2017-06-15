@@ -22,6 +22,10 @@ use PowerOn\Utility\Inflector;
 /**
  * Description of View
  *
+ * @property Helper\HtmlHelper $html Helper Html por defecto
+ * @property Helper\FormHelper $form Helper Form por defecto
+ * @property Helper\BlockHelper $block Helper Block por defecto
+ * @property Helper\UrlHelper $url Helper URL por defecto
  * @author Lucas Sosa
  */
 class View {
@@ -49,7 +53,7 @@ class View {
      * Helpers cargados
      * @var \Pimple\Container
      */
-    public $helpers;
+    public $container;
     
     /**
      * Constructor de la clase View
@@ -61,20 +65,25 @@ class View {
      * Crea los Helpers por defecto del framework
      */
     public function buildHelpers(\Pimple\Container $container) {
-        $this->helpers = $container;
-        $this->helpers['html'] = function($c) {
+        $this->container = $container;
+        $this->container['html'] = function($c) {
             $helper = new \PowerOn\View\Helper\HtmlHelper();
-            $helper->initialize($this, $c['Router'], $c['Request']);
+            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
             return $helper;
         };        
-        $this->helpers['block'] = function($c) {
+        $this->container['block'] = function($c) {
             $helper = new \PowerOn\View\Helper\BlockHelper();
-            $helper->initialize($this, $c['Router'], $c['Request']);
+            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
             return $helper;
         };
-        $this->helpers['form'] = function($c) {
+        $this->container['form'] = function($c) {
             $helper = new \PowerOn\View\Helper\FormHelper();
-            $helper->initialize($this, $c['Router'], $c['Request']);
+            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            return $helper;
+        };
+        $this->container['url'] = function($c) {
+            $helper = new \PowerOn\View\Helper\UrlHelper();
+            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
             return $helper;
         };
     }
@@ -91,7 +100,7 @@ class View {
         }
         $helper_class = 'App\View\Helper\\' . Inflector::classify($name) . 'Helper';
         
-        $this->helpers[$name] = function($c) use ($helper_file, $helper_class) {
+        $this->container[$name] = function($c) use ($helper_file, $helper_class) {
             include_once $helper_file;
          
             if ( !class_exists($helper_class) ) {
@@ -211,8 +220,8 @@ class View {
     public function __get($name) {
         if ( key_exists($name, $this->data) ){
             return $this->data[$name];
-        } else if ( $this->helpers->offsetExists($name) ) {
-            return $this->helpers[$name];
+        } else if ( $this->container->offsetExists($name) ) {
+            return $this->container[$name];
         }
         return NULL;
     }

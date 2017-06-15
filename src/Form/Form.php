@@ -32,10 +32,10 @@ class Form {
      */  
     public $name;
     /**
-     * CSRF key preventor
-     * @var string 
+     * Errores ocurridos en el formulario
+     * @var array
      */
-    private $_token;
+    public $errors;
     /**
      * Los valores cargados
      * @var array
@@ -51,11 +51,7 @@ class Form {
      * @var Validator
      */
     private $_validator;
-    /**
-     * Session Para controlar el token
-     * @var \PowerOn\Network\Session 
-     */
-    private static $_session;
+
     /**
      * Inicializa el formulario
      * @throws DevException
@@ -63,7 +59,6 @@ class Form {
     public function initialize() {
         $reflection = new \ReflectionClass($this);
         $this->name = $reflection->getShortName();
-        $this->_token = self::$_session->write('poweron_token', uniqid('tkn'));
         
         $this->_schema = $this->_buildSchema( new Schema() );
         if ( !$this->_schema instanceof Schema ) { 
@@ -75,10 +70,6 @@ class Form {
             throw new \RuntimeException(sprintf('El validador del formulario (%s) debe retornar un objeto de tipo Validator', $this->name),
                     ['return' => $this->_validator]);
         }
-    }
-    
-    public static function registerServices(\PowerOn\Network\Request $request) {
-        self::$_session = $request->session();
     }
     
     /**
@@ -93,9 +84,7 @@ class Form {
         $this->setValues( $data );
         $this->_validator = $this->_buildValidator( new Validator );
         
-        if ( self::$_session->consume('poweron_token') != $data['poweron_token'] ) {
-            $this->_validator->tokenError();
-        } else if ( $this->_validator->validate( $this->_values ) ) {
+        if ( $this->_validator->validate( $this->_values ) ) {
             $arguments[0] = $this->_values;
             try {
                 $r = call_user_func_array(array($this, '_execute'), $arguments);
@@ -103,10 +92,12 @@ class Form {
                     throw new DevException('El formulario no retorn&oacute; ning&uacute;n valor.');
                 }
                 return $r;
-            } catch (FormException $e) {
-                $this->_validator->errors[$e->field][$e->field_id][] = $e->getMessage();
+            } catch (\PowerOn\Exceptions\ProdException $e) {
+                $this->errors[$e->field] = $e->getMessage();
             }
         }
+        
+        $this->errors = $this->_validator->getErrors();
         
         return FALSE;
     }
@@ -145,14 +136,6 @@ class Form {
      */
     protected function getValue( $name ) {
         return key_exists($name, $this->_values) ? $this->_values[$name] : NULL;
-    }
-    
-    /**
-     * Devuelve el Token del formulario
-     * @return string
-     */
-    public function getToken() {
-        return $this->_token;
     }
     
     /**

@@ -21,9 +21,9 @@ namespace PowerOn\Routing;
 
 use PowerOn\Controller\Controller;
 use PowerOn\Network\Request;
-use PowerOn\View\View;
-use PowerOn\Utility\Container;
+use PowerOn\Utility\Inflector;
 use PowerOn\Exceptions\DevException;
+use PowerOn\Exceptions\ProdException;
 
 /**
  * Dispatcher
@@ -34,7 +34,7 @@ use PowerOn\Exceptions\DevException;
 class Dispatcher {
     /**
      * Maneja las rutas
-     * @var Router
+     * @var \AltoRouter
      */
     private $_router;
     /**
@@ -43,27 +43,33 @@ class Dispatcher {
      */
     private $_request;
     /**
-     * Controlador principal cargado
-     * @var Controller
+     * Nombre del controlador cargado
+     * @var string
      */
     public $controller;
     /**
-     * Resultado del handle del dispatcher
-     * @var mix
+     * Nombre de la acción ejecutada
+     * @var string
      */
-    public $result;
+    public $action;
     /**
-     * Sector no encontrado
+     * Instancia del controlador
+     * @var Controller
      */
-    const NOT_FOUND = 404;
-    /**
-     * Sector econtrado
-     */
-    const FOUND = 1;
-    
-    public function __construct(Router $router, Request $request) {
+    public $instance;
+
+    public function __construct(\AltoRouter $router, Request $request) {
         $this->_router = $router;
         $this->_request = $request;
+        
+        $routes_file = PO_PATH_APP . DS . 'config' . DS . 'routes.php';
+        if ( is_file($routes_file) ) {
+            $routes = include $routes_file;
+            if ( !is_array($routes) ) {
+                throw new DevException(sprintf('El archivo de rutas en (%s) debe retornar un array', $routes_file), ['routes' => $routes]);
+            }
+            $this->_router->addRoutes($routes);
+        }
     }
     
     /**
@@ -71,65 +77,58 @@ class Dispatcher {
      * @return integer
      */
     public function handle() {
-        $this->controller = $this->_router->loadController();
-        $this->result = $this->controller && method_exists($this->controller, $this->_router->action) ? self::FOUND : self::NOT_FOUND;
-        
-        return $this->result;
-    }
-    
-    /**
-     * Lanza la acción del controlador cargado
-     * @param View $view Vista
-     * @param string $force_action forza la ejecución de un método específico
-     * @throws DevException
-     */
-    public function run(View $view, $force_action = NULL) {
-        //Cargamos la plantilla por defecto
-        $view->setTemplate($force_action ? $force_action : $this->_router->action, $this->_router->controller);
-
-        //Si todo esta OK lanzamos la acción final
-        if ( $force_action && !method_exists($this->controller, $force_action) ) {
-            $reflection = new \ReflectionClass($this->controller);
-            
-            throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
-                    $force_action, $reflection->getName()), ['controller' => $this->controller]);
-        }
-
-        $this->controller->{ $force_action ? $force_action : $this->_router->action }();
-        
-        if ( $this->_request->is('ajax') ) {
-            $view->ajax();
+        $match = $this->_router->match($this->_request->request_path);
+        if ( $match ) {
+            $target = explode('#', $match['target']);
+            $this->controller = $target[0];
+            $this->action = key_exists(1, $target) ? $target[1] : 'index';
         } else {
-            //Cargamos la vista del controlador en case que no sea una peticion ajax
-            $view
-                ->set('controller', $this->_router->controller)
-                ->set('action', $this->_router->action)
-                ->set('url', $this->_request->path)
-                ->set('queries', $this->_request->getQueries())
-                ->render()
-            ;
+            $this->controller = $this->_request->controller;
+            $this->action = $this->_request->action;
         }
+        
+        $this->loadController();
+        
+        if ( !$this->instance || !method_exists($this->instance, $this->action) ) {
+            throw new ProdException(404);
+        }
+        
+        return TRUE;
     }
     
-    /**
-     * Ejecuta un controlador y una acción en particular
-     * @param string $controller El controlador a cargar
-     * @param string $action El método a lanzar
-     * @param Container $container El contenedor de dependencias
-     */
-    public function runController($controller, $action, Container $container) {
-        $this->controller = $this->_router->loadController($controller, $action);
-        $container->method($this->controller, 'initialize');
-        $this->run($action);
+    public function force($request_controller, $request_action = 'index') {
+        $this->controller = $request_controller;
+        $this->action = $request_action;
+        
+        $this->loadController();
+        if (!$this->instance) {
+            throw new DevException(sprintf('No se existe la clase del controlador (%s)', $this->controller));
+        }
+        
+        if ( !method_exists($this->instance, $this->action) ) {
+            $reflection = new \ReflectionClass($this->instance);
+
+            throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
+                    $this->action, $reflection->getName()), ['controller' => $this->controller]);
+        }
+        
+        return TRUE;
     }
-    
+
     /**
-     * Devuelve el controlador solicitado
-     * @param type $controller
-     * @return Controller
+     * Verifica la existencia del controlador solicitado y lo devuelve
+     * @return Controller Devuelve una instancia del controlador solicitado, devuelve FALSE si no existe
      */
-    public function loadController($controller) {
-        $this->controller = $this->_router->loadController($controller);
-        return $this->controller;
+    private function loadController() {
+        $controller_name = Inflector::classify($this->controller) . 'Controller';
+        $controller_class = 'App\\Controller\\' . $controller_name;
+        
+        if ( !class_exists($controller_class) ) {
+            return FALSE;
+        }
+        
+        $this->instance = new $controller_class();
+        
+        return TRUE;
     }
 }

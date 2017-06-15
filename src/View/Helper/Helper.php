@@ -21,14 +21,17 @@ namespace PowerOn\View\Helper;
 
 /**
  * Helper Contenedor de helpers del framework
+ * 
+ * @property HtmlHelper $html Helper Html por defecto
+ * @property FormHelper $form Helper Form por defecto
+ * @property BlockHelper $block Helper Block por defecto
+ * @property UrlHelper $url Helper Url por defecto
  * @author Lucas Sosa
- * @version 0.1
- * @copyright (c) 2016, Lucas Sosa
  */
 class Helper {
     /**
      * Router del framework
-     * @var \PowerOn\Routing\Router
+     * @var \AltoRouter
      */
     protected $_router;
     /**
@@ -40,7 +43,7 @@ class Helper {
      * Instancia de view donde se utiliza el helper
      * @var \PowerOn\View\View
      */
-    private $_view;
+    protected $_view;
     
     /**
      * Inicializa el helper
@@ -48,7 +51,7 @@ class Helper {
      * @param \PowerOn\View\Helper\PowerOn\Routing\Router $router
      * @param \PowerOn\Network\Request $request
      */
-    public function initialize(\PowerOn\View\View $view, \PowerOn\Routing\Router $router, \PowerOn\Network\Request $request) {
+    public function initialize(\PowerOn\View\View $view, \AltoRouter $router, \PowerOn\Network\Request $request) {
         $this->_view = $view;
         $this->_router = $router;
         $this->_request = $request;
@@ -60,8 +63,8 @@ class Helper {
      * @return Helper|null Si se encuentra un helper con ese nombre lo retorna.
      */
     public function __get($name) {
-        if ( !isset( $this->{$name} )  && $this->_view->helpers->offsetExists($name) ) {
-            $this->{$name} = $this->_view->helpers[$name];
+        if ( !isset( $this->{$name} )  && $this->_view->container->offsetExists($name) ) {
+            $this->{$name} = $this->_view->container[$name];
             
             return $this->{$name};
         }

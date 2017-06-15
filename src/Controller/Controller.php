@@ -39,11 +39,6 @@ class Controller {
      *  @var Request
      */
     protected $request;
-    /** 
-     * El Router encargado de la URL
-     * @var Router
-     */
-    protected $router;
     /**
      * Logger del sistema
      * @var \Monolog\Logger
@@ -61,10 +56,9 @@ class Controller {
      * @param Router $router
      * @param \Monolog\Logger $logger
      */
-    public function registerServices(View $view, Request $request, Router $router, \Monolog\Logger $logger) {
+    public function registerServices(View $view, Request $request, \Monolog\Logger $logger) {
         $this->view = $view;
         $this->request = $request;
-        $this->router = $router;
         $this->logger = $logger;
     }
     

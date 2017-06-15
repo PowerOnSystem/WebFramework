@@ -35,7 +35,8 @@ class IndexController extends Controller {
             if ( $form->execute($this->request->getData()) ) {
                 echo 'Enviado correctamente';
             } else {
-                echo 'No se envió nada';
+                echo 'ocurrió un error: ';
+                var_dump($form->errors);
             }
         }
         

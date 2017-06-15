@@ -17,14 +17,13 @@
  */
 namespace PowerOn\Application;
 
-use PowerOn\Routing\Dispatcher;
 use PowerOn\Exceptions\DevException;
 use PowerOn\Exceptions\ProdException;
 use PowerOn\Utility\Config;
 
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-//Autoloader de la aplicación
+//Registramos el autoloader de la aplicación
 spl_autoload_register(function($classname){
     if ( class_exists($classname) ) {
         return FALSE;
@@ -39,63 +38,106 @@ spl_autoload_register(function($classname){
     }
 });
 
+//Inicializamos la configuración de la aplicación
 if ( is_file(PO_PATH_CONFIG . DS . 'application.php') ) {
     Config::initialize( PO_PATH_CONFIG . DS . 'application.php' );
 }
 
-//Pimple Container
+//Creamos el container de Pimple Container
 $container = new \Pimple\Container();
 include POWERON_ROOT . DS . 'Application' . DS . 'Configuration.php';
 
+//Instanciamos la clase Request
+/* @var $request \PowerOn\Network\Request */
+$request = $container['Request'];
+
+//Instanciamos la clase Dispatcher
 /* @var $dispatcher \PowerOn\Routing\Dispatcher */
 $dispatcher = $container['Dispatcher'];
+
+//Instanciamos la clase View que vamos a utilizar
+/* @var $view \PowerOn\View\View */
+$view = $container['View'];
+
+//Instanciamos el logger de monolog a utilizar
+/*  @var $logger \Monolog\Logger */
+$logger = $container['Logger'];
 
 try {
     //Verificación de configuración general
     include POWERON_ROOT . DS . 'Application' . DS . 'Check.php';
     
     try {
-        switch ( $dispatcher->handle() ) {
-            case Dispatcher::NOT_FOUND  : throw new ProdException(404); 
-            case Dispatcher::FOUND      :
-                $dispatcher->controller->registerServices(
-                        $container['View'], $container['Request'], $container['Router'], $container['Logger']);
-                $dispatcher->run($container['View']); break;
-            default                     : 
-                throw new DevException('El dispatcher no retorn&oacute; el valor esperado.', 
-                        ['dispatcher_result' => $dispatcher->result]);
+
+        //CSRF Protección
+        /* @var $csrf \PowerOn\Form\CSRFProtection */
+        if ( $request->is('post') ) {
+            $csrf = $container['CSRFProtection'];
+            if ( !$csrf->check($request->data('poweron_token')) ) {
+                throw new ProdException(101);
+            }
         }
-    } catch (DevException $d) {
-        if ( DEV_ENVIRONMENT ) {
-            echo '<h1>' . $d->getMessage() . '</h1>';
-            echo '<h4>' . $d->getFile() . ' ('. $d->getLine() . ')</h4>';
-            echo '<h5>DEBUG:</h5>';
-            var_dump($d->getContext());
-            echo '<h5>TRACE:</h5>';
-            var_dump(array_map(function($f) {
-                return (key_exists('class', $f) ? $f['class'] : '') . 
-                        (key_exists('type', $f) ? $f['type'] : '') .
-                        $f['function'] . (key_exists('args', $f) ? '(' . json_encode($f['args']) . ')' : '') . ' [' . 
-                        (key_exists('file', $f) ? $f['file'] : '') . '-' . 
-                        (key_exists('line', $f) ? $f['line'] : '') . ']';
-            }, $d->getTrace()));
-        } else {
-            /*  @var $logger \Monolog\Logger */
-            $logger = $container['Logger'];
-            $logger->error($d->getMessage(), [
-                'line' => $d->getLine(),
-                'file' => $d->getFile(),
-                'trace' => $d->getTrace(),
-                'context' => $d->getContext()
-            ]);
-            throw new ProdException(409, 'Developer environment exception.', $d);
+        
+        try {
+            $dispatcher->handle();
+        } catch (DevException $d) {
+            if ( DEV_ENVIRONMENT ) {
+                echo '<h1>' . $d->getMessage() . '</h1>';
+                echo '<h4>' . $d->getFile() . ' ('. $d->getLine() . ')</h4>';
+                echo '<h5>DEBUG:</h5>';
+                var_dump($d->getContext());
+                echo '<h5>TRACE:</h5>';
+                var_dump(array_map(function($f) {
+                    return (key_exists('class', $f) ? $f['class'] : '') . 
+                            (key_exists('type', $f) ? $f['type'] : '') .
+                            $f['function'] . (key_exists('args', $f) ? '(' . json_encode($f['args']) . ')' : '') . ' [' . 
+                            (key_exists('file', $f) ? $f['file'] : '') . '-' . 
+                            (key_exists('line', $f) ? $f['line'] : '') . ']';
+                }, $d->getTrace()));
+            } else {
+                $logger->error($d->getMessage(), [
+                    'line' => $d->getLine(),
+                    'file' => $d->getFile(),
+                    'trace' => $d->getTrace(),
+                    'context' => $d->getContext()
+                ]);
+                throw new ProdException(409, 'Developer environment exception.', $d);
+            }
         }
+    } catch (ProdException $p) {
+        $dispatcher->force('index', 'error');
+        $dispatcher->instance->registerException($p);
     }
-} catch (ProdException $p) {
-    $dispatcher->loadController('index');
-    $dispatcher->controller->registerServices($container['View'], $container['Request'], $container['Router'], $container['Logger']);
-    $dispatcher->controller->registerException($p);
-    $dispatcher->run($container['View'], 'error');
+    
+    
+    //Verificamos que tengamos un controlador cargado
+    if ( !$dispatcher->instance ) {
+        throw new \Exception('No se carg&oacute; ning&uacute;n controlador');
+    }
+
+    //Cargamos la plantilla por defecto
+    $view->setTemplate($dispatcher->action, $dispatcher->controller);
+
+    //Cargamos los servicios al controlador
+    $dispatcher->instance->registerServices($view, $request, $logger);
+
+    //Si todo esta OK lanzamos la acción final
+    $dispatcher->instance->{ $dispatcher->action }();
+
+    if ( $request->is('ajax') ) {
+        $view->ajax();
+    } else {
+        //Cargamos la vista del controlador en case que no sea una peticion ajax
+        $view
+            ->set('controller', $dispatcher->controller)
+            ->set('action', $dispatcher->action)
+            ->set('url', $request->path)
+            ->set('queries', $request->getQueries())
+            ->render()
+        ;
+    }
+
+    
 } catch (\Exception $e) {
     if (DEV_ENVIRONMENT) {
         echo '<h1>' . $e->getMessage() . '</h1>';
@@ -109,15 +151,16 @@ try {
                     (key_exists('line', $d) ? $d['line'] : '') . ']';
         }, $e->getTrace()));
     } else {        
-        /*  @var $logger \Monolog\Logger */
-        $logger = $container['Logger'];
         $logger->emergency($e->getMessage(), [
             'line' => $e->getLine(),
             'file' => $e->getFile(),
             'trace' => $e->getTrace()
         ]);
-        echo '<h1>Temporalmente fuera de servicio...</h1>';
-        echo 'Contactese con el webmaster para m&aacute;s detalles: ';
-        echo '<a href="mailto:' . PO_WEBMASTER['email'] . '">' . PO_WEBMASTER['name'] . '</a>';
+        $shutdown_file = PO_PATH_VIEW . DS . 'layout' . DS . 'shutdown.phtml';
+        if ( is_file($shutdown_file) ) {
+            require $shutdown_file;
+        } else {
+            echo 'Temporalmente fuera de servicio.';
+        }
     }
 }

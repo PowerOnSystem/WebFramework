@@ -53,15 +53,16 @@ class HtmlHelper extends Helper {
     public function link($content, $url = [], array $options = []) {
         $cfg = [
             'href' => is_array($url) ? (
-                key_exists('push', $url) ? $this->_router->pushUrl($url['push']) : (
+                key_exists('push', $url) ? $this->url->push($url['push']) : (
                 key_exists('add', $url) || key_exists('remove', $url) ? 
-                    $this->_router->modifyUrl(
+                    $this->url->modify(
                         key_exists('add', $url) ? $url['add'] : [],
                         key_exists('remove', $url) ? $url['remove'] : []
                     ) : (
-                        key_exists('mailto', $url) ? 'mailto:' . $url['mailto'] : $this->_router->buildUrl($url)
+                        key_exists('generate', $url) ? $this->url->build($url, \PowerOn\Application\array_trim($url, 'generate')) :
+                            (key_exists('mailto', $url) ? 'mailto:' . $url['mailto'] : $this->url->build($url))
                     )
-            )) : ( $this->_router->routeExist($url) ? $this->_router->buildUrl([], $url) : $url )
+            )) : ( $this->url->routeExist($url) ? $this->url->build([], $url) : $url )
         ] + $options;
         return '<a ' . html_serialize($cfg) . ' >' . $content . '</a>' . PHP_EOL;
     }

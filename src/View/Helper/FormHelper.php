@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) Makuc Julian & Makuc Diego S.H.
+ * Copyright (C) PowerOn Sistemas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ class FormHelper extends Helper {
      * @var Form 
      */
     protected $_form;
+    /**
+     * Protección contra ataques CSRF
+     * @var \PowerOn\Form\CSRFProtection
+     */
+    protected $_csrf;
 
     /**
      * Carga un formulario
@@ -39,7 +44,8 @@ class FormHelper extends Helper {
     public function load(Form $form) {
         $this->_form = $form;
         $this->_form->initialize();
-        $this->html->js('elements/cncservice.form.js');
+        $this->_csrf = $this->_view->container['CSRFProtection'];
+        $this->_csrf->generate();
     }
     
     /**
@@ -110,13 +116,13 @@ class FormHelper extends Helper {
             'class' =>  $class,
             'name' => $this->_form->name,
             'id' => $this->_form->name,
-            'action' => $action ? $action : $this->_router->modifyUrl(),
+            'action' => $action ? $action : $this->url->build(),
             'method' => 'post',
             'novalidate' => 'novalidate',
             'enctype' => 'multipart/form-data'
         ];
         $r = '<form ' . html_serialize($options) . ' > ' . PHP_EOL;
-        $r .= '<input type = "hidden" name = "poweron_token" value = "' . $this->_form->getToken() . '" />' . PHP_EOL;
+        $r .= '<input type = "hidden" name = "poweron_token" value = "' . $this->_csrf->get() . '" />' . PHP_EOL;
         
         return $r;
     }
@@ -142,16 +148,27 @@ class FormHelper extends Helper {
         return $r;
     }
     
+    /**
+     * Renderiza el campo solicitado
+     * @param array $field Nombre del campo
+     * @return string El campo renderizado en html
+     * @throws \RuntimeException
+     */
     public function renderField($field) {
         $method = strtolower($field['type']) . 'RenderField';
         if ( !method_exists($this,  $method) ) {
-            throw new \RuntimeException(sprintf('El campo (%s) no posee ningun renderizador.', $field['type']));
+            return $this->defaultRenderField($field);
         }
         
         return $this->{ $method }( $field );
     }
     
-    public function fileRenderField($field) {
+    /**
+     * Devuelve el renderizado de un campo tipo file
+     * @param array $field Nombre del campo
+     * @return string El campo renderizado en html
+     */
+    public function defaultRenderField($field) {
         return '<input ' . html_serialize($field) . ' />';
     }
 }

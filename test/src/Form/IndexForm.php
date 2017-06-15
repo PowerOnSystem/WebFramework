@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) Makuc Julian & Makuc Diego S.H.
+ * Copyright (C) PowerOn Sistemas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,17 @@ use PowerOn\Form\Form;
 class IndexForm extends Form {
 
     protected function _buildSchema(\PowerOn\Form\Schema $schema) {
-        $schema->add('file', 'file');
+        $schema->add('nombre', 'text');
         
         return $schema;
     }
     
-    protected function _execute(array $values) {
+    protected function _buildValidator(\PowerOn\Form\Validator $validator) {
+        $validator->add('nombre', 'min_length', '5');
+        return $validator;
+    }
+
+        protected function _execute(array $values) {
         return TRUE;
     }
 

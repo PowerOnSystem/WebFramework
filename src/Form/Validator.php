@@ -311,12 +311,12 @@ class Validator {
                     }
                 } catch (\Exception $e) {
                     switch ($rule->level) {
-                        case Rule::ERROR    : 
-                            $this->_errors[$field][$field_id][] = $rule->message ? $rule->message : $e->getMessage();
+                        case Rule::ERROR    :
+                            $this->_errors[$field] = $rule->message ? $rule->message : $e->getMessage();
                             $return = FALSE;
                             break;
                         case Rule::WARNING  : 
-                            $this->_warnings[$field][$field_id][] = $rule->message ? $rule->message : $e->getMessage();
+                            $this->_warnings[$field] = $rule->message ? $rule->message : $e->getMessage();
                             break;
                     }
                 }
@@ -364,7 +364,7 @@ class Validator {
         return $this;
     }
     
-    public function tokenError() {
-        $this->_errors['token'] = 'El formulario expir&oacute;.';
+    public function getErrors() { 
+        return $this->_errors;
     }
 }
