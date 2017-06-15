@@ -45,4 +45,5 @@ class IndexController extends Controller {
     public function error() {
         $this->view->set('errors', $this->exception);
     }
+
 }

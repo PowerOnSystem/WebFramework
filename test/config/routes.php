@@ -22,15 +22,17 @@
  * que vienen por defecto en el patron MVC (controller/action)
  * Formato:
  * return [
- *      PATTERN => [ CONTROLLER, ACTION ]
+ *      PATTERN => [ CONTROLLER, ACTION, NAME ]
  * ]
  * 
  * Ejemplo:
  * return [
- *      'user/test/[0-9]*' => ['user', 'testService']
+ *      'about' => ['index', 'about'],
+ *      'user/test/[0-9]*' => ['user', 'testService', 'user_test']
  * ]
  */
 
 return [
-    
+    'home' => ['index', 'index', 'home'],
+    'about' => ['index', 'about', 'about']
 ];

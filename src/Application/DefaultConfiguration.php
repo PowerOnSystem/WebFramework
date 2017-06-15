@@ -20,11 +20,11 @@ defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
 
 //PATHS POR DEFECTO
 defined('PO_PATH_ROOT') ?: define('PO_PATH_ROOT', '');
-defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT . DS . (DEV_ENVIRONMENT ? 'test' : 'app'));
+defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT . DS . (DEV_ENVIRONMENT ? 'test' : ''));
 defined('PO_PATH_LANGS') ?: define('PO_PATH_LANGS', PO_PATH_APP . DS . 'langs');
 
 defined('PO_PATH_CONFIG') ?: define('PO_PATH_CONFIG', PO_PATH_APP . DS . 'config');
-defined('PO_PATH_MODULES') ?: define('PO_PATH_MODULES', PO_PATH_APP . DS . 'modules');
+defined('PO_PATH_MODULES') ?: define('PO_PATH_MODULES', PO_PATH_APP . DS . 'src');
 defined('PO_PATH_WEBROOT') ?: define('PO_PATH_WEBROOT', PO_PATH_APP . DS . 'webroot');
 
 defined('PO_PATH_VIEW') ?: define('PO_PATH_VIEW', PO_PATH_MODULES . DS . 'View');

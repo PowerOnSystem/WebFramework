@@ -18,7 +18,6 @@
 
 namespace PowerOn\Network;
 use Detection\MobileDetect;
-use PowerOn\Exceptions\ProdException;
 
 /**
  * Maneja la solicitud del cliente
@@ -58,6 +57,11 @@ class Request {
      */
     public $path;
     /**
+     * La url completa con controlador y accion, finaliza SIN BARRA "/"
+     * @var string 
+     */
+    public $request_path;
+    /**
      * La url completa con las query
      * @var string
      */
@@ -92,7 +96,9 @@ class Request {
         if ( in_array(PO_PATH_ROOT, $url, TRUE) ) {
             array_shift($url);
         }
-
+        
+        $this->request_path = implode('/', $url);
+        
         $controller = array_shift($url);
         $action = array_shift($url);
         $this->controller = $controller ? $controller : 'index';
@@ -164,7 +170,7 @@ class Request {
         }
         return $m == $this->_method;
     }
-    
+
     /**
      * Devuelve el dato enviado por POST
      * @param mix $name El nombre del parametro

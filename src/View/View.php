@@ -116,17 +116,15 @@ class View {
         if ( !is_file($path) ) {
             throw new DevException(sprintf('No se encuentra la plantilla (%s) a cargar en (%s).', $this->template['name'], $path));
         }
-        
+        ob_start();
         try {
-            ob_start();
             include $path;
-            $this->content = ob_get_clean();
         } catch (\RuntimeException $e) {
-            //$this->content = ob_get_clean();
-            throw new DevException(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));            
-        }  catch (\Exception $e) {
-            ob_get_clean();
+            ob_end_clean();
+            throw new DevException(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));
+            
         }
+        $this->content = ob_get_clean();
         
 
         $path_layout = PO_PATH_TEMPLATES . DS . 'layout' . DS . ($this->layout ? $this->layout : 'default') . '.phtml';

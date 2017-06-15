@@ -73,8 +73,9 @@ class Router {
      * @return Controller
      */
     public function loadController($force_controller = NULL) {
-        $this->controller = $force_controller ? $force_controller : ($this->_request->url(0) ? $this->_request->url(0) : $this->controller);
-        $this->action = $this->_request->url(1) ? $this->_request->url(1) : $this->action;
+        $this->controller = $force_controller ? $force_controller : 
+                ($this->_request->controller ? $this->_request->controller : $this->controller);
+        $this->action = $this->_request->action ? $this->_request->action : $this->action;
 
         //Verificamos la ruta para obtener el controlador y la accion
         if ( !$force_controller && $this->_collections ) {
@@ -115,7 +116,7 @@ class Router {
     private function match() {
         foreach ($this->_collections as $param => $route) {
             $this->_altorouter->map('GET', $param, NULL, key_exists(2, $route) ? $route[2] : NULL);
-            if ( $this->_altorouter->match() ) {
+            if ( $this->_altorouter->match($this->_request->request_path) ) {
                 if ( !key_exists(0, $route) || !key_exists(1, $route) ) {
                     throw new DevException(sprintf('La ruta encontrada esta mal configurada', $param), 
                             ['route' => $route, 'param' => $param]);
@@ -126,12 +127,14 @@ class Router {
         }
     }
     
+    /**
+     * Verifica si una ruta existe con el nombre especificado
+     * @param string $name Nombre de la ruta a verificar
+     * @return boolean
+     */
     public function routeExist($name) {
-        try {
-            return $this->_altorouter->generate($name);
-        } catch (\Exception $e) {
-            return FALSE;
-        }
+        $routes = array_column($this->_altorouter->getRoutes(), 3);
+        return in_array($name, $routes);
     }
     
     /**
