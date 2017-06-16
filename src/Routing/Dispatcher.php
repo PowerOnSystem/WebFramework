@@ -19,7 +19,7 @@
 
 namespace PowerOn\Routing;
 
-use PowerOn\Controller\Controller;
+use PowerOn\Controller\BasicController;
 use PowerOn\Network\Request;
 use PowerOn\Utility\Inflector;
 use PowerOn\Exceptions\DevException;
@@ -54,7 +54,7 @@ class Dispatcher {
     public $action;
     /**
      * Instancia del controlador
-     * @var Controller
+     * @var BasicController
      */
     public $instance;
 
@@ -117,7 +117,7 @@ class Dispatcher {
 
     /**
      * Verifica la existencia del controlador solicitado y lo devuelve
-     * @return Controller Devuelve una instancia del controlador solicitado, devuelve FALSE si no existe
+     * @return BasicController Devuelve una instancia del controlador solicitado, devuelve FALSE si no existe
      */
     private function loadController() {
         $controller_name = Inflector::classify($this->controller) . 'Controller';

@@ -19,56 +19,17 @@
 
 namespace App\Controller;
 
-use PowerOn\Controller\Controller;
+use PowerOn\Controller\FullController;
 
 /**
  * IndexController
  * @author Lucas Sosa
  * @version 0.1
  */
-class IndexController extends Controller {
+class IndexController extends FullController {
 
     public function index() {
-        $table = new \PowerOn\Utility\Table(['border' => 1]);
-        $content = [
-            [
-                '_row_param' => ['class' => 'warning'],
-                'id' => '1', 'name' => 'Sergio', 
-                'client' => ['title' => '00922893', 'link' => ['controller' => 'clients', 'action' => 'view', '12893']]
-            ],
-            [
-                'id' => '2', 'name' => 'Alejo', 
-                'client' => ['title' => '00128293', 'link' => ['controller' => 'clients', 'action' => 'view', '12893']]
-            ],
-            [
-                '_row_param' => ['class' => 'warning'],
-                'id' => '3', 'name' => 'Chanchi', 
-                'client' => ['title' => '00128332', 'link' => ['controller' => 'clients', 'action' => 'view', '5235235']]
-            ],
-            [
-                'id' => '4', 'name' => 'Miguel', 
-                'client' => ['title' => '00128372', 'link' => ['controller' => 'clients', 'action' => 'view', '12312']]
-            ],
-            [
-                'id' => '5', 'name' => 'Daniel', 
-                'client' => ['title' => '00287382', 'link' => ['controller' => 'clients', 'action' => 'view', '35353']]
-            ]
-        ];
-        
-        $pagination = new \PowerOn\Utility\Pagination($this->request->url('page'), count($content), 2);
-        
-        $table->header([
-            'id' => 'Codigo',
-            'name' => 'Nombre',
-            'client' => ['title' => 'Nro. Cliente', 'class' => 'po highlight', 'error' => 'ident']
-        ]);
-        $table->footer([
-            'id' => ['colspan' => 2],
-            'name' => NULL,
-            'client' => '30 clientes'
-        ]);
-        $table->body($content);
-        $this->view->set('table', $table);
+        $this->database;
     }
 
     public function error() {

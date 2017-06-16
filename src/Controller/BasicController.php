@@ -28,7 +28,7 @@ use PowerOn\Routing\Router;
  * @version 0.1
  * @author Lucas
  */
-class Controller {
+class BasicController {
     /**
      * Control del template
      *  @var View 
@@ -39,11 +39,6 @@ class Controller {
      *  @var Request
      */
     protected $request;
-    /**
-     * Logger del sistema
-     * @var \Monolog\Logger
-     */
-    protected $logger;
     /**
      * Registra una excepcion generada
      * @var \Exception
@@ -56,10 +51,9 @@ class Controller {
      * @param Router $router
      * @param \Monolog\Logger $logger
      */
-    public function registerServices(View $view, Request $request, \Monolog\Logger $logger) {
-        $this->view = $view;
-        $this->request = $request;
-        $this->logger = $logger;
+    public function registerServices(\Pimple\Container $container) {
+        $this->view = $container['View'];
+        $this->request = $container['Request'];
     }
     
     public function registerException(\Exception $exception) {

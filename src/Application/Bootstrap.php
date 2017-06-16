@@ -119,7 +119,7 @@ try {
     $view->setTemplate($dispatcher->action, $dispatcher->controller);
 
     //Cargamos los servicios al controlador
-    $dispatcher->instance->registerServices($view, $request, $logger);
+    $dispatcher->instance->registerServices($container);
 
     //Si todo esta OK lanzamos la acción final
     $dispatcher->instance->{ $dispatcher->action }();
