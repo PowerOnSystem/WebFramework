@@ -19,6 +19,7 @@
 
 namespace PowerOn\View\Helper;
 use function \PowerOn\Application\html_serialize;
+use function \PowerOn\Application\array_trim;
 
 /**
  * Ayudante de Html
@@ -134,5 +135,63 @@ class HtmlHelper extends Helper {
         ];
         
         return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . html_serialize($cfg) . ' />' . PHP_EOL;
+    }
+    
+    /**
+     * Renderiza una tabla solicitada
+     * @param \PowerOn\Utility\Table $table
+     * @param $params [Opcional] Parámetros adicionales para la tabla
+     */
+    public function table(\PowerOn\Utility\Table $table, array $params = []) {
+        $header = $table->getHeader();
+        $body = $table->getBody();
+        $footer = $table->getFooter();
+        $rows_params = $table->getRowsParams();
+        $r = '<table ' . html_serialize( $params + $table->getConfig() ) . '>';
+        if ($header) {
+            $r .= '<thead>';
+                $r .= '<tr>';
+                foreach ($header as $hr) {
+                    $title = array_trim($hr, 'title');
+                    $r .= '<th ' . html_serialize($hr) . '>';
+                        $r .= $title;
+                    $r .= '</th>';
+                }
+                $r .= '</tr>';
+            $r .= '</thead>';
+        }
+        if ($footer) {
+            $r .= '<tfoot>';
+                $r .= '<tr>';
+                foreach ($footer as $fr) {
+                    $title = array_trim($fr, 'title');
+                    if ( $title !== NULL )  {
+                        $r .= '<td ' . html_serialize($fr) . '>';
+                            $r .= $title;
+                        $r .= '</td>';
+                    }
+                }
+                $r .= '</tr>';
+            $r .= '</tfoot>';
+        }
+        if ($body) {
+            $r .= '<tbody>';
+            foreach ($body as $row_id => $rw) {
+                $r .= '<tr ' . ( key_exists($row_id, $rows_params) ? html_serialize($rows_params[$row_id]) : '' ) . '>';
+                    foreach ($rw as $data) {
+                        $link = array_trim($data, 'link');
+                        $title = array_trim($data, 'title');
+                        if ($title !== NULL) {
+                            $r .= '<td ' . html_serialize($data) . '>';
+                                $r .= $link ? $this->html->link($title, $link) : $title;
+                            $r .= '</td>';
+                        }
+                    }
+                $r .= '</tr>';
+            }
+            $r .= '</tbody>';
+        }
+        $r .= '</table>';
+        return $r;
     }
 }

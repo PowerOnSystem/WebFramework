@@ -41,7 +41,7 @@ function array_trim(array &$array, $key) {
     }
     $value = $array[$key];
     unset ( $array[$key] );
-    array_unshift ( $array, array_shift ( $array ) );
+    //array_unshift ( $array, array_shift ( $array ) );
     return $value;
 }
 
