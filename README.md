@@ -22,7 +22,7 @@ desarrollo de páginas simples.
 Podés instalar WebFramework vía
 [Composer](https://getcomposer.org).  Si estas comenzando un nuevo proyecto te 
 recomiendo que uses el Template [WebTemplate](https://github.com/PowerOnSystem/WebTemplate) que puede servir
-de guía para tu desarrollo, si lo querés instalar en un proyecto iniciado podés a travéz de la consola:
+de guía para tu desarrollo, si lo querés instalar en un proyecto iniciado podés a través de la consola:
 
 ``` bash
 $ composer require poweronsystem/webframework: "0.1.0"
