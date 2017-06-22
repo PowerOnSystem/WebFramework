@@ -59,13 +59,6 @@ class FullController {
      */
     public function registerServices(\Pimple\Container $container) {
         $this->_container = $container;
-        /*
-        $this->view = $container['View'];
-        $this->request = $container['Request'];
-        $this->logger = $container['Logger'];
-        $this->database = $container['Database'];
-         * 
-         */
     }
     
     public function registerException(\Exception $exception) {

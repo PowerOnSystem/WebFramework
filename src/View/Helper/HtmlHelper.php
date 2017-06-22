@@ -138,60 +138,24 @@ class HtmlHelper extends Helper {
     }
     
     /**
-     * Renderiza una tabla solicitada
-     * @param \PowerOn\Utility\Table $table
-     * @param $params [Opcional] Parámetros adicionales para la tabla
+     * Crea una lista simple u ordenada
+     * @param array $list Array con la lista completa, puede ser un array multidimencional
+     * @param array $options [Opcional] Opciones de la lista Ej: <code>$options = ['class' => 'my_list', 'id' => 'mylist1']</code>
+     * @param array $item_options [Opcional] Opciones de un item específico Ej: <code> $item_options = [1 => ['class' => 'active']] </code>
+     * @param type $type_list [Opcional] Tipo de lista, "ordered" para una lista ordenada o list
+     * @return string
      */
-    public function table(\PowerOn\Utility\Table $table, array $params = []) {
-        $header = $table->getHeader();
-        $body = $table->getBody();
-        $footer = $table->getFooter();
-        $rows_params = $table->getRowsParams();
-        $r = '<table ' . html_serialize( $params + $table->getConfig() ) . '>';
-        if ($header) {
-            $r .= '<thead>';
-                $r .= '<tr>';
-                foreach ($header as $hr) {
-                    $title = array_trim($hr, 'title');
-                    $r .= '<th ' . html_serialize($hr) . '>';
-                        $r .= $title;
-                    $r .= '</th>';
-                }
-                $r .= '</tr>';
-            $r .= '</thead>';
+    public function nestedList(array $list, array $options = [], array $item_options = [], $type_list = 'list') {
+        $type = $type_list == 'list' ? 'ul' : 'ol';
+        $r = '<' . $type . ' ' . html_serialize($options) . '>';
+        foreach ($list as $key => $l) {
+            $r .= is_array($l) ? $this->nestedList($l, key_exists($key, $item_options) ? $item_options[$key] : []) : 
+                '<li ' . (key_exists($key, $item_options) ? html_serialize($item_options[$key]) : '') . ' >' . 
+                    $l . 
+                '</li>';
         }
-        if ($footer) {
-            $r .= '<tfoot>';
-                $r .= '<tr>';
-                foreach ($footer as $fr) {
-                    $title = array_trim($fr, 'title');
-                    if ( $title !== NULL )  {
-                        $r .= '<td ' . html_serialize($fr) . '>';
-                            $r .= $title;
-                        $r .= '</td>';
-                    }
-                }
-                $r .= '</tr>';
-            $r .= '</tfoot>';
-        }
-        if ($body) {
-            $r .= '<tbody>';
-            foreach ($body as $row_id => $rw) {
-                $r .= '<tr ' . ( key_exists($row_id, $rows_params) ? html_serialize($rows_params[$row_id]) : '' ) . '>';
-                    foreach ($rw as $data) {
-                        $link = array_trim($data, 'link');
-                        $title = array_trim($data, 'title');
-                        if ($title !== NULL) {
-                            $r .= '<td ' . html_serialize($data) . '>';
-                                $r .= $link ? $this->html->link($title, $link) : $title;
-                            $r .= '</td>';
-                        }
-                    }
-                $r .= '</tr>';
-            }
-            $r .= '</tbody>';
-        }
-        $r .= '</table>';
+        $r .= '</' . $type . '>';
+        
         return $r;
     }
 }

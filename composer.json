@@ -26,7 +26,6 @@
             "PowerOn\\": "src"
         },
         "files": [
-            "src/Application/DefaultConfiguration.php",
             "src/Application/Functions.php",
             "src/Application/Bootstrap.php"
         ]

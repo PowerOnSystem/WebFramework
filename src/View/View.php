@@ -86,8 +86,21 @@ class View {
             $helper->initialize($this, $c['AltoRouter'], $c['Request']);
             return $helper;
         };
+        
+        //Autoload de Helpers opcionales
+        
+        //TableHelper
+        $this->container['table'] = function($c) {
+            if ( !class_exists('\PowerOn\Table\TableHelper') ) {
+                throw new \RuntimeException('El Helper solicitado no fue cargado');
+            }
+            $helper = new \PowerOn\Table\TableHelper();
+            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            
+            return $helper;
+        };
     }
-    
+
     /**
      * Carga un Helper
      * @param string $name El nombre a utilizar

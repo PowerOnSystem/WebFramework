@@ -63,11 +63,3 @@ $container['View'] = function($c) {
     
     return $view;
 };
-
-$container['Database'] = function($c) {
-    if ( class_exists('\PowerOn\Database\Database') ) {
-        return new PowerOn\Database\Database();
-    }
-    
-    return NULL;
-};

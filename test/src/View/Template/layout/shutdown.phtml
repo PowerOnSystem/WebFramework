@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* @var $this PowerOn\View\View */
+use PowerOn\Utility\Config;
 ?>
 <h1>Temporalmente fuera de servicio...</h1>
 <p>
     Contactese con el webmaster para m&aacute;s detalles:
-        <a href="mailto:<?= PO_WEBMASTER['email'] ?>"><?= PO_WEBMASTER['name'] ?></a>
+    <a href="mailto:<?= Config::get('Webmaster.email') ?>"><?= Config::get('Webmaster.name') ?></a>
 </p>

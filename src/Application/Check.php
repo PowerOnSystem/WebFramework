@@ -17,7 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//Si esta bien configurada la carpeta de la aplicacion
-if ( !is_dir(PO_PATH_APP) ) {
-    throw new \Exception(sprintf('No existe la carpeta de la aplicaci&oacute;n configurada en (%s)', PO_PATH_APP));
+//Si estan bien configuradas las carpetas de la aplicación
+$folders = [
+    'Application root' => PO_PATH_APP, 
+    'Content source' => PO_PATH_APP_CONTENT, 
+    'Configuration' => PO_PATH_CONFIG, 
+    'Helpers' => PO_PATH_HELPER, 
+    'Languages' => PO_PATH_LANGS, 
+    'View templates' => PO_PATH_TEMPLATES, 
+    'View' => PO_PATH_VIEW, 
+    'Webroot' => PO_PATH_WEBROOT
+];
+
+foreach ($folders as $name => $folder) {
+    if ( !is_dir($folder) ) {
+        throw new \Exception(sprintf('No existe la carpeta (%s) configurada en (%s)', $name, $folder));
+    }
 }
+
+$check = fopen(PO_PATH_APP . DS . 'check.lock.php', 'w');
+fwrite($check, 'ok');
+fclose($check);

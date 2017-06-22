@@ -22,6 +22,7 @@ use PowerOn\Exceptions\ProdException;
 use PowerOn\Utility\Config;
 
 define('POWERON_ROOT', dirname(dirname(__FILE__)));
+defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
 
 //Registramos el autoloader de la aplicación
 spl_autoload_register(function($classname){
@@ -31,12 +32,21 @@ spl_autoload_register(function($classname){
     $split = explode('\\', $classname);
     $folder = array_shift($split);
     if ( $folder == 'App' ) {
-        $path = PO_PATH_MODULES . DS . implode(DS, $split) . '.php';
+        $path = PO_PATH_APP_CONTENT . DS . implode(DS, $split) . '.php';
         if ( is_file($path) ) {
             require $path;
         }
     }
 });
+
+//Incluimo la configuración de directorios de la web en caso de que exista
+if ( is_file(ROOT . DS . (DEV_ENVIRONMENT ? 'test' : '') . DS . 'config' . DS . 'path.php') ) {
+    include ROOT . DS . (DEV_ENVIRONMENT ? 'test' : '') . DS . 'config' . DS . 'path.php';
+}
+
+//Incluimos la configuración de los directorios por defecto
+include POWERON_ROOT . DS . 'Application' . DS . 'Path.php';
+
 
 //Inicializamos la configuración de la aplicación
 if ( is_file(PO_PATH_CONFIG . DS . 'application.php') ) {
@@ -59,13 +69,11 @@ $dispatcher = $container['Dispatcher'];
 /* @var $view \PowerOn\View\View */
 $view = $container['View'];
 
-//Instanciamos el logger de monolog a utilizar
-/*  @var $logger \Monolog\Logger */
-$logger = $container['Logger'];
-
 try {
-    //Verificación de configuración general
-    include POWERON_ROOT . DS . 'Application' . DS . 'Check.php';
+    if ( !is_file(PO_PATH_APP . DS . 'check.lock.php') ) {
+        //Verificación de configuración general
+        include POWERON_ROOT . DS . 'Application' . DS . 'Check.php';
+    }
     
     try {
 
@@ -95,6 +103,9 @@ try {
                             (key_exists('line', $f) ? $f['line'] : '') . ']';
                 }, $d->getTrace()));
             } else {
+                /*  @var $logger \Monolog\Logger */
+                $logger = $container['Logger'];
+                
                 $logger->error($d->getMessage(), [
                     'line' => $d->getLine(),
                     'file' => $d->getFile(),
@@ -150,7 +161,9 @@ try {
                     (key_exists('file', $d) ? $d['file'] : '') . '-' . 
                     (key_exists('line', $d) ? $d['line'] : '') . ']';
         }, $e->getTrace()));
-    } else {        
+    } else {
+        /*  @var $logger \Monolog\Logger */
+        $logger = $container['Logger'];
         $logger->emergency($e->getMessage(), [
             'line' => $e->getLine(),
             'file' => $e->getFile(),
