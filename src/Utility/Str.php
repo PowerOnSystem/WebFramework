@@ -58,6 +58,5 @@ class Str {
         }
 
         return implode(' ', $result);
-    }
-
+    }    
 }

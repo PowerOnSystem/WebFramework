@@ -57,25 +57,11 @@ class Request {
      */
     public $path;
     /**
-     * La url completa con controlador y accion, finaliza SIN BARRA "/"
-     * @var string 
-     */
-    public $request_path;
-    /**
      * La url completa con las query
      * @var string
      */
     public $full_path;
-    /**
-     * Controlador solicitado por url
-     * @var string
-     */
-    public $controller;
-    /**
-     * Accion solicitada por url
-     * @var string
-     */
-    public $action;
+
     
 
     public function __construct() {
@@ -96,14 +82,7 @@ class Request {
         if ( in_array(PO_PATH_ROOT, $url, TRUE) ) {
             array_shift($url);
         }
-        
-        $this->request_path = implode('/', $url);
-        
-        $controller = array_shift($url);
-        $action = array_shift($url);
-        $this->controller = $controller ? $controller : 'index';
-        $this->action = $action ? $action : 'index';
-        
+
         $this->_url = array_values($url);
         $this->path = implode('/', $url);
 
@@ -212,6 +191,13 @@ class Request {
         return $this->_get;
     }
     
+    /**
+     * Devuelve la URL en array
+     * @return array
+     */
+    public function urlToArray() {
+        return $this->_url;
+    }
     /**
      * Devuelve el dato de una COOKIE
      * @param string|integer $name El nombre del parametro

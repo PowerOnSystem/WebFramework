@@ -26,20 +26,13 @@ use PowerOn\Exceptions\DevException;
  */
 class Config {
 
-    private static $_config;
+    private static $_config = [];
     /**
      * Inicializa la configuración
-     * @param string $file Ruta del archivo de configuración
+     * @param array $config La configuracion a inicializar
      * @throws DevException
      */
-    public static function initialize($file) {
-        if ( !is_file($file) ) {
-            throw new DevException(sprintf('No se encuentra el archivo (%s)', $file));
-        }
-        $config = include $file;
-        if ( !is_array($config) ) {
-            throw new DevException(sprintf('El archivo (%s) debe retornar un array', $file), ['return' => $config]);
-        }
+    public static function initialize(array $config) {
         self::$_config = $config;
     }
     

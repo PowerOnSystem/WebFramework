@@ -19,11 +19,9 @@
 
 namespace PowerOn\Routing;
 
-use PowerOn\Controller\BasicController;
-use PowerOn\Network\Request;
 use PowerOn\Utility\Inflector;
 use PowerOn\Exceptions\DevException;
-use PowerOn\Exceptions\ProdException;
+use PowerOn\Exceptions\NotFoundException;
 
 /**
  * Dispatcher
@@ -32,16 +30,6 @@ use PowerOn\Exceptions\ProdException;
  * @copyright (c) 2016, Lucas Sosa
  */
 class Dispatcher {
-    /**
-     * Maneja las rutas
-     * @var \AltoRouter
-     */
-    private $_router;
-    /**
-     * Solicitud
-     * @var Request
-     */
-    private $_request;
     /**
      * Nombre del controlador cargado
      * @var string
@@ -52,72 +40,64 @@ class Dispatcher {
      * @var string
      */
     public $action;
-    /**
-     * Instancia del controlador
-     * @var BasicController
-     */
-    public $instance;
-
-    public function __construct(\AltoRouter $router, Request $request) {
-        $this->_router = $router;
-        $this->_request = $request;
-        
-        $routes_file = PO_PATH_APP . DS . 'config' . DS . 'routes.php';
-        if ( is_file($routes_file) ) {
-            $routes = include $routes_file;
-            if ( !is_array($routes) ) {
-                throw new DevException(sprintf('El archivo de rutas en (%s) debe retornar un array', $routes_file), ['routes' => $routes]);
-            }
-            $this->_router->addRoutes($routes);
-        }
-    }
     
     /**
-     * Busca coincidencias con la url solicitada
-     * @return integer
+     * Obtiene el controlador a utilizar
+     * @return \PowerOn\Controller\Controller Devuelve el controlador
      */
-    public function handle() {
-        $match = $this->_router->match($this->_request->request_path);
+    public function handle( \AltoRouter $router, \PowerOn\Network\Request $request ) {
+        $match = $router->match($request->path);
         if ( $match ) {
             $target = explode('#', $match['target']);
             $this->controller = $target[0];
             $this->action = key_exists(1, $target) ? $target[1] : 'index';
         } else {
-            $this->controller = $this->_request->controller;
-            $this->action = $this->_request->action;
+            $url = $request->urlToArray();
+            $controller = array_shift($url);
+            $action = array_shift($url);
+            $this->controller = $controller ? $controller : 'index';
+            $this->action = $action ? $action : 'index';
         }
         
-        $this->loadController();
+        $handler = $this->loadController();
         
-        if ( !$this->instance || !method_exists($this->instance, $this->action) ) {
-            throw new ProdException(404);
+        if ( !$handler || !method_exists($handler, $this->action) ) {
+            throw new NotFoundException('El sitio al que intenta ingresar no existe.');
         }
         
-        return TRUE;
+        return $handler;
     }
     
+    /**
+     * Forza la carga de un controlador
+     * @param string $request_controller
+     * @param string $request_action
+     * @return \PowerOn\Controller\Controller
+     * @throws DevException
+     */
     public function force($request_controller, $request_action = 'index') {
         $this->controller = $request_controller;
         $this->action = $request_action;
         
-        $this->loadController();
-        if (!$this->instance) {
+        $handler = $this->loadController();
+        
+        if ( !$handler ) {
             throw new DevException(sprintf('No se existe la clase del controlador (%s)', $this->controller));
         }
         
-        if ( !method_exists($this->instance, $this->action) ) {
-            $reflection = new \ReflectionClass($this->instance);
+        if ( !method_exists($handler, $this->action) ) {
+            $reflection = new \ReflectionClass($handler);
 
             throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
-                    $this->action, $reflection->getName()), ['controller' => $this->controller]);
+                    $this->action, $reflection->getName()), ['controller' => $handler]);
         }
         
-        return TRUE;
+        return $handler;
     }
 
     /**
      * Verifica la existencia del controlador solicitado y lo devuelve
-     * @return BasicController Devuelve una instancia del controlador solicitado, devuelve FALSE si no existe
+     * @return \PowerOn\Controller\Controller Devuelve una instancia del controlador solicitado, devuelve FALSE si no existe
      */
     private function loadController() {
         $controller_name = Inflector::classify($this->controller) . 'Controller';
@@ -127,8 +107,6 @@ class Dispatcher {
             return FALSE;
         }
         
-        $this->instance = new $controller_class();
-        
-        return TRUE;
+        return new $controller_class();
     }
 }

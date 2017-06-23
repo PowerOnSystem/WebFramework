@@ -47,14 +47,12 @@ class Helper {
     
     /**
      * Inicializa el helper
-     * @param \PowerOn\View\Helper\PowerOn\View\View $view
-     * @param \PowerOn\View\Helper\PowerOn\Routing\Router $router
-     * @param \PowerOn\Network\Request $request
+     * @param \Pimple\Container $container El contenedor principal
      */
-    public function initialize(\PowerOn\View\View $view, \AltoRouter $router, \PowerOn\Network\Request $request) {
-        $this->_view = $view;
-        $this->_router = $router;
-        $this->_request = $request;
+    public function initialize(\Pimple\Container $container) {
+        $this->_view = $container['View'];
+        $this->_router = $container['AltoRouter'];
+        $this->_request = $container['Request'];
     }
     
     /**

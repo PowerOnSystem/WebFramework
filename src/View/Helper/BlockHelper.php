@@ -18,6 +18,7 @@
  */
 
 namespace PowerOn\View\Helper;
+use PowerOn\Exceptions\RuntimeException;
 
 /**
  * BlockHelper
@@ -27,4 +28,43 @@ namespace PowerOn\View\Helper;
  */
 class BlockHelper extends Helper {
     
+    /**
+     * Obtiene el trace de legible de una excepcion
+     * @param array $trace
+     * @return string
+     */
+    public function humaniceTrace(array $trace) {
+        throw new RuntimeException('No anda el humanicetrace');
+        $list = [];
+        foreach ($trace as $id_trace => $e) {
+            $class = explode('\\', key_exists('class', $e) ? $e['class'] : '');
+            $type = key_exists('type', $e) ? $e['type'] : '';
+            $function = key_exists('function', $e) ? $e['function'] : '';
+            $args = key_exists('args', $e) ? $e['args'] : [];
+            $file = key_exists('file', $e) ? $e['file'] : [];
+            $line = key_exists('line', $e) ? $e['line'] : [];
+
+            $item = $class ? '<span style="color:blue" title="' . implode('\\', $class) . '">' . end($class) . '</span>' : '';
+            $item .= $type ? '<span style="color:teal">' . $type . '</span>' : '';
+            $item .= $function ? '<span style="color:red">' . $function . '</span>' : '';
+            $item .= $args ? 
+                    '(' .
+                        $this->html->link(count($args) . ' arg', [], 
+                            ['onclick' => 'var a=document.getElementById(\'args_' . $id_trace . '\');'
+                                . ' if (a.style.display==\'block\') { a.style.display=\'none\' } else { a.style.display=\'block\' };'
+                                . 'return false;']) . 
+                    ')' : '()';
+            $item .= $file ? ' - <span style="color:lightgray" onmouseover="this.style.color=\'gray\'" '
+                    . 'onmouseout="this.style.color=\'lightgray\'" >' . $file . '</span>' : '';
+            $item .= $line ? ' <span style="color:salmon">' . $line . '</span>' : '';
+            $item .= $args ? '<div style="display:none" id="args_' . $id_trace . '">' . k($args, KRUMO_RETURN) . '</div>' : '';
+            
+            $list[] = $item;
+        }
+        
+        return $this->html->nestedList($list, [
+                'style' => 'font-family: arial; line-height:30px;',
+                'reversed' => 'reversed'
+            ], [], 'ordered');
+    }
 }

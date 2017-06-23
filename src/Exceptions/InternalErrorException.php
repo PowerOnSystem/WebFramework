@@ -16,25 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+namespace PowerOn\Exceptions;
 
-//Si estan bien configuradas las carpetas de la aplicación
-$folders = [
-    'Application root' => PO_PATH_APP, 
-    'Content source' => PO_PATH_APP_CONTENT, 
-    'Configuration' => PO_PATH_CONFIG, 
-    'Helpers' => PO_PATH_HELPER, 
-    'Languages' => PO_PATH_LANGS, 
-    'View templates' => PO_PATH_TEMPLATES, 
-    'View' => PO_PATH_VIEW, 
-    'Webroot' => PO_PATH_WEBROOT
-];
+/**
+ * InternalErrorException Excepciones internas para modo producción
+ * @author Lucas Sosa
+ * @version 0.1
+ */
+class InternalErrorException extends PowerOnException {
+    
+    private $_message = 'Esta secci&oacute;n se encuentra momentaneamente fuera de servicio';
 
-foreach ($folders as $name => $folder) {
-    if ( !is_dir($folder) ) {
-        throw new \Exception(sprintf('No existe la carpeta (%s) configurada en (%s)', $name, $folder));
+    /**
+     * Contempla los errores de programación
+     * @param string $message
+     * @param integer $code Codigo de error
+     * @param \Exception $exception [Opcional] Excepcion anterior
+     */
+    public function __construct($message = NULL, $code = NULL, \Exception $exception = NULL) {
+        parent::__construct($message ? $message : $this->_message, $code, [], $exception);
     }
 }
-
-$check = fopen(PO_PATH_APP . DS . 'check.lock.php', 'w');
-fwrite($check, 'ok');
-fclose($check);

@@ -27,8 +27,14 @@
         },
         "files": [
             "src/Application/Functions.php",
+            "src/Application/Configuration.php",
             "src/Application/Bootstrap.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "test/src"
+        }
     },
     "require-dev": {
         "mmucklo/krumo": "^0.5.7"

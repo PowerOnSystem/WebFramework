@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright (C) PowerOn Sistemas
  *
@@ -17,23 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace App\Controller;
+/* @var $this PowerOn\View\View */
+/* @var $exception \PowerOn\Exceptions\PowerOnException */
+$exception = $this->exception;
+?>
 
-use PowerOn\Controller\Controller;
-
-/**
- * IndexController
- * @author Lucas Sosa
- * @version 0.1
- */
-class IndexController extends Controller {
-
-    public function index() {
-        
-    }
-
-    public function error() {
-        $this->view->set('errors', $this->exception);
-    }
-
-}
+<h1>Error en modo producci&oacute;n</h1>
+<h3>Excepcion completa</h3>
+<?php k($exception) ?>
+<h3>Excepcion anterior</h3>
+<?php k($exception->getPrevious());

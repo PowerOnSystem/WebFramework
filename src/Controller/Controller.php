@@ -18,33 +18,18 @@
  */
 
 namespace PowerOn\Controller;
+use PowerOn\Exceptions\DevException;
 
 /**
  * Controlador avanzado con más herramientas
  * @version 0.1
+ * @property \PowerOn\View\View $view Controlador del template
+ * @property \PowerOn\Network\Request $request Datos de la solicitud del cliente
+ * @property \Monolog\Logger $logger Creador de archivos log
+ * @property \PowerOn\Database\Database $database Modulo PowerOn/DataBaseService
  * @author Lucas
  */
-class FullController {
-    /**
-     * Control del template
-     *  @var \PowerOn\View\View 
-     */
-    protected $view;
-    /**
-     * Todos los datos de la solicitud del cliete
-     *  @var \PowerOn\Network\Request
-     */
-    protected $request;
-    /**
-     * Creador de archivos log
-     * @var \Monolog\Logger
-     */
-    protected $logger;
-    /**
-     * Registra una excepcion generada
-     * @var \Exception
-     */
-    protected $exception;
+class Controller {
     /**
      * Contenedor principal
      * @var \Pimple\Container
@@ -52,22 +37,20 @@ class FullController {
     private $_container;
     /**
      * Inicializa un controlador
-     * @param View $view
-     * @param Request $request
-     * @param Router $router
-     * @param \Monolog\Logger $logger
+     * @param \Pimple\Container Contenedor de Pimple
      */
-    public function registerServices(\Pimple\Container $container) {
+    public function registerContainer(\Pimple\Container $container) {
         $this->_container = $container;
     }
     
-    public function registerException(\Exception $exception) {
-        $this->exception = $exception;
-    }
-    
     public function __get($name) {
-        if ( $this->_container->offsetExists(\PowerOn\Utility\Inflector::classify($name)) ) {
-            echo 'existe';
-        } else echo 'no existe';
+        $object_name = \PowerOn\Utility\Inflector::classify($name);
+        if ( $this->_container->offsetExists($object_name) ) {
+            $object = $this->_container[$object_name];
+            if ( !$object ) {
+                throw new DevException(sprintf('El m&oacute;dulo (%s) solicitado no fue instalado.', $object_name));
+            }
+            return $object;
+        }
     }
 }

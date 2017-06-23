@@ -18,44 +18,32 @@
 namespace PowerOn\Application;
 
 use PowerOn\Exceptions\DevException;
-use PowerOn\Exceptions\ProdException;
-use PowerOn\Utility\Config;
+use PowerOn\Application\PowerOn;
 
-define('POWERON_ROOT', dirname(dirname(__FILE__)));
-defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
-
-//Registramos el autoloader de la aplicación
-spl_autoload_register(function($classname){
-    if ( class_exists($classname) ) {
-        return FALSE;
+//Archivo de configuración de la aplicación
+$config = [];
+$config_file = PO_PATH_CONFIG . DS . 'application.php';
+if ( is_file($config_file) ) {
+    $config = include $config_file;
+    if ( !is_array($config) ) {
+        throw new DevException(sprintf('El archivo (%s) debe retornar un array', $file), ['return' => $config]);
     }
-    $split = explode('\\', $classname);
-    $folder = array_shift($split);
-    if ( $folder == 'App' ) {
-        $path = PO_PATH_APP_CONTENT . DS . implode(DS, $split) . '.php';
-        if ( is_file($path) ) {
-            require $path;
-        }
-    }
-});
-
-//Incluimo la configuración de directorios de la web en caso de que exista
-if ( is_file(ROOT . DS . (DEV_ENVIRONMENT ? 'test' : '') . DS . 'config' . DS . 'path.php') ) {
-    include ROOT . DS . (DEV_ENVIRONMENT ? 'test' : '') . DS . 'config' . DS . 'path.php';
 }
 
-//Incluimos la configuración de los directorios por defecto
-include POWERON_ROOT . DS . 'Application' . DS . 'Path.php';
+//Creamos el framework
+$poweron = new PowerOn( $config );
 
+//Registramos el contenedor principal
+$poweron->registerContainer( include POWERON_ROOT . DS . 'Application' . DS . 'Container.php' );
 
-//Inicializamos la configuración de la aplicación
-if ( is_file(PO_PATH_CONFIG . DS . 'application.php') ) {
-    Config::initialize( PO_PATH_CONFIG . DS . 'application.php' );
-}
+//Iniciamos la aplicación seleccioando el entorno adecuado
+$poweron->run( DEV_ENVIRONMENT ? PowerOn::DEVELOPMENT : PowerOn::PRODUCTION );
+
+die;
 
 //Creamos el container de Pimple Container
-$container = new \Pimple\Container();
-include POWERON_ROOT . DS . 'Application' . DS . 'Configuration.php';
+/* @var $container \Pimple\Container */
+$container = include POWERON_ROOT . DS . 'Application' . DS . 'Configuration.php';
 
 //Instanciamos la clase Request
 /* @var $request \PowerOn\Network\Request */
@@ -87,6 +75,9 @@ try {
         }
         
         try {
+            $view->buildHelpers($container);
+            $view->initialize();
+            
             $dispatcher->handle();
         } catch (DevException $d) {
             if ( DEV_ENVIRONMENT ) {

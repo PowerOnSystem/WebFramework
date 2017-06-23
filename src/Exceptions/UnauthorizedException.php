@@ -16,24 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace App\Controller;
-
-use PowerOn\Controller\Controller;
+namespace PowerOn\Exceptions;
 
 /**
- * IndexController
+ * UnauthorizedException Excepciones de error de autorización
  * @author Lucas Sosa
  * @version 0.1
  */
-class IndexController extends Controller {
-
-    public function index() {
-        
+class UnauthorizedException extends PowerOnException {
+    
+    private $_message = 'No esta autorizado a ingresar en este sector.';
+    
+    /**
+     * Contempla los errores de programación
+     * @param string $message
+     * @param array $context [Opcional] Datos para hacer debug
+     * @param \Exception $exception [Opcional] Excepcion anterior
+     */
+    public function __construct($message = NULL, \Exception $exception = NULL) {
+        parent::__construct($message ? $message : $this->_message, NULL, [], $exception);
     }
-
-    public function error() {
-        $this->view->set('errors', $this->exception);
-    }
-
 }

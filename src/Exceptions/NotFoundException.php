@@ -19,12 +19,13 @@
 namespace PowerOn\Exceptions;
 
 /**
- * DevException Controla los errores causados por errores de programación
+ * NotFoundException Excepciones producidas por falta la falta de algúna variable o archivo importante
  * @author Lucas Sosa
  * @version 0.1
  */
-class DevException extends PowerOnException {
+class NotFoundException extends PowerOnException {
     
+    private $_message = 'El sector al que intenta ingresar no existe.';
     /**
      * Contempla los errores de programación
      * @param string $message
@@ -32,7 +33,25 @@ class DevException extends PowerOnException {
      * @param \Exception $exception [Opcional] Excepcion anterior
      */
     public function __construct($message = '', array $context = [], \Exception $exception = NULL) {
-        parent::__construct($message, NULL, $context, $exception);
-        $this->_context = $context;
+        parent::__construct($message ? $message : $this->_message, 404, $context, $exception);
+    }
+    
+    
+    protected function _render() {
+        return 
+        '<!DOCTYPE html>'
+        . '<html>' . PHP_EOL
+            . '<head>' . PHP_EOL
+                . '<title>Error 404</title>' . PHP_EOL
+            . '</head>' . PHP_EOL
+            . '<body>' . PHP_EOL
+                . '<h1>&iexcl;Ups!: '
+                . $this->getMessage()
+                . '</h1>' . PHP_EOL
+                . '<p>'
+                . $this->getHelp()
+                . '</p>' . PHP_EOL
+            . '</body>' . PHP_EOL
+        . '</html>';
     }
 }

@@ -18,6 +18,7 @@
 namespace PowerOn\View;
 use PowerOn\Exceptions\DevException;
 use PowerOn\Utility\Inflector;
+use PowerOn\Exceptions\RuntimeException;
 
 /**
  * Description of View
@@ -68,22 +69,22 @@ class View {
         $this->container = $container;
         $this->container['html'] = function($c) {
             $helper = new \PowerOn\View\Helper\HtmlHelper();
-            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            $helper->initialize($c);
             return $helper;
         };        
         $this->container['block'] = function($c) {
             $helper = new \PowerOn\View\Helper\BlockHelper();
-            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            $helper->initialize($c);
             return $helper;
         };
         $this->container['form'] = function($c) {
             $helper = new \PowerOn\View\Helper\FormHelper();
-            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            $helper->initialize($c);
             return $helper;
         };
         $this->container['url'] = function($c) {
             $helper = new \PowerOn\View\Helper\UrlHelper();
-            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            $helper->initialize($c);
             return $helper;
         };
         
@@ -95,7 +96,7 @@ class View {
                 throw new \RuntimeException('El Helper solicitado no fue cargado');
             }
             $helper = new \PowerOn\Table\TableHelper();
-            $helper->initialize($this, $c['AltoRouter'], $c['Request']);
+            $helper->initialize($c);
             
             return $helper;
         };
@@ -121,7 +122,7 @@ class View {
             }
             
             $helper = new $helper_class();
-            $helper->initialize($this, $c);
+            $helper->initialize($c);
             
             return $helper;
         };
@@ -131,13 +132,14 @@ class View {
      * Renderiza la plantilla actual
      * @throws DevException
      */
-    public function render() {
+    public function getRenderedTemplate() {
         $view_file = $this->template['name'] . '.phtml';
         $path = PO_PATH_TEMPLATES . DS . $this->template['folder'] . DS . $view_file;
         
         if ( !is_file($path) ) {
             throw new DevException(sprintf('No se encuentra la plantilla (%s) a cargar en (%s).', $this->template['name'], $path));
         }
+        
         ob_start();
         try {
             include $path;
@@ -154,7 +156,38 @@ class View {
             throw new DevException(sprintf('No se encuentra la plantilla principal (%s) a cargar en (%s).', $this->layout, $path_layout));
         }
 
+        ob_start();
         require_once $path_layout;
+        return ob_get_clean();
+    }
+    
+    /**
+     * Devuelve una plantilla renderizada del framework
+     * @param string $template La ubicación de la plantilla
+     * @param string $layout La ubicación del layout
+     * @return type
+     * @throws DevException
+     */
+    public function getCoreRenderedTemplate( $template, $layout = NULL ) {        
+        if ( !is_file(POWERON_ROOT . DS . $template) ) {
+            throw new DevException(sprintf('No se encuentra la plantilla core a cargar en (%s).', POWERON_ROOT . DS . $template));
+        }
+        
+        ob_start();
+        try {
+            include POWERON_ROOT . DS . $template;
+        } catch (RuntimeException $e) {
+            echo $e->getRenderedError();
+        }
+        $this->content = ob_get_clean();
+
+        if ( $layout && !is_file(POWERON_ROOT . DS . $layout) ) {
+            throw new DevException(sprintf('No se encuentra la plantilla principal core  a cargar en (%s).', POWERON_ROOT . DS . $layout));
+        }
+
+        ob_start();
+        require_once POWERON_ROOT . DS . $layout;
+        return ob_get_clean();
     }
     
     /**
@@ -170,6 +203,10 @@ class View {
      * @throws DevException
      */
     public function setLayout($name) {
+        if ( !$name ) {
+            return FALSE;
+        }
+        
         $path_layout = PO_PATH_TEMPLATES . DS . 'layout' . DS . $name . '.phtml';
         if ( !is_file($path_layout) ) {
             throw new DevException(sprintf('No existe la plantilla principal (%s) en (%s).', $name, $path_layout));

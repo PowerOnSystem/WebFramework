@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright (C) PowerOn Sistemas
  *
@@ -17,23 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace App\Controller;
-
-use PowerOn\Controller\Controller;
-
-/**
- * IndexController
- * @author Lucas Sosa
- * @version 0.1
- */
-class IndexController extends Controller {
-
-    public function index() {
-        
-    }
-
-    public function error() {
-        $this->view->set('errors', $this->exception);
-    }
-
-}
+use PowerOn\Utility\Config;
+?>
+<h1>Temporalmente fuera de servicio...</h1>
+<p>
+    Contactese con el webmaster para m&aacute;s detalles:
+    <a href="mailto:<?= Config::get('Webmaster.email') ?>"><?= Config::get('Webmaster.name') ?></a>
+</p>

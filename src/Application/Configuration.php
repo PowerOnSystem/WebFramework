@@ -16,50 +16,61 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* @var $container \Pimple\Container */
+//Si no esta definido el DIRECTORY SEPARATOR
+defined('DS') ?: define('DS', DIRECTORY_SEPARATOR);
 
+/**
+ * Carpeta raiz del framework
+ */
+define('POWERON_ROOT', dirname(dirname(__FILE__)));
 
-$container['Logger'] = function() {
-    $logger = new Monolog\Logger('PowerOn');
-    if ( DEV_ENVIRONMENT ) {
-        $handler = new \Monolog\Handler\BrowserConsoleHandler();
-        $formatter = new Monolog\Formatter\LineFormatter('%level_name% > %message%');
-        $handler->setFormatter($formatter);
-    } else {
-        $handler = new Monolog\Handler\StreamHandler(ROOT . DS . 'error.log');
-    }
-    $logger->pushHandler($handler);
-    
-    return $logger;
-};
+//Si no esta definido el entorno
+defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
 
-$container['Request'] = function() {
-    return new \PowerOn\Network\Request();
-};
+//Si no esta definida la carpeta raiz de la aplicación
+defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT);
 
-$container['AltoRouter'] = function() {
-    return new AltoRouter();
-};
-
-$container['Dispatcher'] = function($c) {
-    return new \PowerOn\Routing\Dispatcher($c['AltoRouter'], $c['Request']);
-};
-
-$container['CSRFProtection'] = function($c) {
-    return new \PowerOn\Form\CSRFProtection($c['Request']);
-};
-
-$container['View'] = function($c) {
-    $view_file = PO_PATH_VIEW . DS . 'AppView.php';
-    if ( !is_file($view_file) ) {
-        $view = new PowerOn\View\View();
-    } else {
-        include_once $view_file;
-        $view = new \App\View\AppView();
-    }
-    
-    $view->buildHelpers($c);
-    $view->initialize();
-    
-    return $view;
-};
+/**
+ * Subdirectorio donde se va a acceder a la web
+ */
+define('PO_PATH_ROOT', NULL);
+/**
+ * Lenguajes
+ */
+define('PO_PATH_LANGS', PO_PATH_APP . DS . 'langs');
+/**
+ * Configuración
+ */
+define('PO_PATH_CONFIG', PO_PATH_APP . DS . 'config');
+/**
+ * Contenido de la web
+ */
+define('PO_PATH_APP_CONTENT', PO_PATH_APP . DS . 'src');
+/**
+ * Webroot de la web
+ */
+define('PO_PATH_WEBROOT', PO_PATH_APP . DS . 'webroot');
+/**
+ * Vistas, Templates y Helpers a utilizar
+ */
+define('PO_PATH_VIEW', PO_PATH_APP_CONTENT . DS . 'View');
+/**
+ * Templates de la web
+ */
+define('PO_PATH_TEMPLATES', PO_PATH_VIEW . DS . 'Template');
+/**
+ * Helpers de la web
+ */
+define('PO_PATH_HELPER', PO_PATH_VIEW . DS . 'Helper');
+/**
+ * Webroot carpeta javascript
+ */
+define('PO_PATH_JS', (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . '/js');
+/**
+ * Webroot carpeta de archivos de estilos css
+ */
+define('PO_PATH_CSS', (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . '/css');
+/**
+ * Webroot carpeta de imágenes
+ */
+define('PO_PATH_IMG', (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . '/img');
