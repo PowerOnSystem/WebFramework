@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) Makuc Julian & Makuc Diego S.H.
+ * Copyright (C) PowerOn Sistemas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,16 +84,15 @@ class PowerOn {
         try {
             try {
                 /* @var $view \PowerOn\View\View */
-                $view = $this->_container['View'];
-                $view->initialize();
-                
+                $view = $this->_container['View'];                
                 $controller = $dispatcher->handle( $this->_container['AltoRouter'], $request );
 
                 $view->setLayout(Config::get('View.layout'));
                 $view->setTemplate($dispatcher->action, $dispatcher->controller);
-
+                $view->initialize();
+                
                 $controller->registerContainer($this->_container);
-                $controller->{ $dispatcher->action };
+                $controller->{ $dispatcher->action }();
 
                 $response->render( $view->getRenderedTemplate() );
 
