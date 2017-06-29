@@ -27,6 +27,7 @@ use PowerOn\Exceptions\DevException;
  * @property \PowerOn\Network\Request $request Datos de la solicitud del cliente
  * @property \Monolog\Logger $logger Creador de archivos log
  * @property \PowerOn\Database\Database $database Modulo PowerOn/DataBaseService
+ * @property \PowerOn\Network\Response $response Respuesta del servidor
  * @author Lucas
  */
 class Controller {

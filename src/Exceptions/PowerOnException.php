@@ -80,7 +80,9 @@ class PowerOnException extends \Exception {
      * @param \Monolog\Logger $logger
      */
     public function log( \Monolog\Logger $logger) {
+        $reflection = new \ReflectionClass($this);
         $logger->error($this->getMessage(), [
+            'type' => $reflection->getShortName(),
             'code' => $this->getCode(),
             'line' => $this->getLine(),
             'file' => $this->getFile(),

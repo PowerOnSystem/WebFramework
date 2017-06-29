@@ -18,7 +18,6 @@
  */
 
 namespace PowerOn\View\Helper;
-use PowerOn\Exceptions\RuntimeException;
 
 /**
  * BlockHelper
@@ -34,7 +33,6 @@ class BlockHelper extends Helper {
      * @return string
      */
     public function humaniceTrace(array $trace) {
-        throw new RuntimeException('No anda el humanicetrace');
         $list = [];
         foreach ($trace as $id_trace => $e) {
             $class = explode('\\', key_exists('class', $e) ? $e['class'] : '');

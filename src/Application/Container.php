@@ -25,7 +25,7 @@ $container['Logger'] = function() {
         $formatter = new Monolog\Formatter\LineFormatter('%level_name% > %message%');
         $handler->setFormatter($formatter);
     } else {
-        $handler = new Monolog\Handler\StreamHandler(ROOT . DS . 'error.log');
+        $handler = new Monolog\Handler\StreamHandler(PO_PATH_LOGS . DS . 'error.log');
     }
     $logger->pushHandler($handler);
     
@@ -46,6 +46,8 @@ $container['AltoRouter'] = function() {
     if ( is_file($routes_file) ) {
         $router->addRoutes( include $routes_file );
     }
+    
+    $router->map('GET', 'error/[i:error]', 'system#error', 'poweron_error');
     
     return $router;
 };

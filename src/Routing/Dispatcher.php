@@ -101,8 +101,8 @@ class Dispatcher {
      */
     private function loadController() {
         $controller_name = Inflector::classify($this->controller) . 'Controller';
-        $controller_class = 'App\\Controller\\' . $controller_name;
-        
+        $controller_class = $this->controller === 'system' ? 'PowerOn\\Controller\\CoreController' : 'App\\Controller\\' . $controller_name;
+
         if ( !class_exists($controller_class) ) {
             return FALSE;
         }

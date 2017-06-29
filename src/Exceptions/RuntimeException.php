@@ -30,7 +30,6 @@ class RuntimeException extends PowerOnException {
     /**
      * Contempla los errores de programación
      * @param string $message
-     * @param integer $code Codigo de error
      * @param \Exception $exception [Opcional] Excepcion anterior
      */
     public function __construct($message = NULL) {

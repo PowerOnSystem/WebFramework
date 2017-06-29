@@ -29,7 +29,10 @@ defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
 
 //Si no esta definida la carpeta raiz de la aplicación
 defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT);
-
+/**
+ * Archivos Log
+ */
+define('PO_PATH_LOGS', PO_PATH_APP . DS . 'logs');
 /**
  * Subdirectorio donde se va a acceder a la web
  */
@@ -74,3 +77,18 @@ define('PO_PATH_CSS', (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . '/css');
  * Webroot carpeta de imágenes
  */
 define('PO_PATH_IMG', (PO_PATH_ROOT ? '/' . PO_PATH_ROOT : '') . '/img');
+
+error_reporting(E_ALL);
+
+//Configuracion de reporte de errores
+if ( DEV_ENVIRONMENT ) {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    ini_set('logs_error', '0');
+} else {
+    ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
+    ini_set('logs_error', '1');
+    ini_set('error_log', PO_PATH_LOGS . DS . 'php.log');
+}
+

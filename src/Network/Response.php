@@ -34,6 +34,12 @@ class Response {
     private $_config = [
         'buffer_size' => 8192
     ];
+    
+    /**
+     * Cabezera por defecto a enviar
+     * @var integer
+     */
+    private $_default_header = 200;
     /**
      * Status HTTP
      * @var array
@@ -110,18 +116,32 @@ class Response {
         }
     }
     
+    /**
+     * Establece una cabezera a enviar
+     * @param type $code
+     */
+    public function setHeader($code) {
+        if ( !headers_sent() ) {
+            header( $this->getStatus($code) );
+        }
+    }
+    
+    public function defaultHeader($code) {
+        $this->_default_header = $code;
+    }
+    
    /**
-    * Renders a response.
-    * @access public
+    * Renderiza la respuesta completa
     * @param mix $response_sent La respuesta puede ser un string con el body o un array 
     *   ['body' => BODY_CONTENT, 'headers' => [HEADER_TO_SEND], 'status' => STATUS_CODE ]
     * @param integer $status [Opcional] El codigo de estado HTTP, por defecto es 200
-    * @return void
     */
-    public function render($response_sent, $status = 200) {
+    public function render($response_sent, $status = NULL) {
         $response = $this->_parse($response_sent);
-        
-        if ( !is_null($status) ) {
+
+        if (is_null($status)) {
+            $status = $this->getStatus($this->_default_header);
+        } elseif ( !is_null($status) ) {
             $status = $this->getStatus($status);
         } elseif ( !is_null($response['status']) ) {
             $status = $this->getStatus($response['status']);
@@ -144,8 +164,8 @@ class Response {
     }
     
     /**
-    * Parses a response.
-    * @access protected
+    * Da formato a una respuesta.
+    * 
     * @param mix $response La respuesta a formatear, puede ser un array con los valores body, headers y status o un string con el body
     * @throws DevException
     * @return array

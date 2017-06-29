@@ -16,24 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace PowerOn\Exceptions;
 
+namespace PowerOn\Controller;
+use PowerOn\Utility\Config;
 /**
- * InternalErrorException Excepciones internas para modo producción
+ * CoreController controlador de funciones por defecto
  * @author Lucas Sosa
  * @version 0.1
  */
-class InternalErrorException extends PowerOnException {
-    
-    private $_message = 'Esta secci&oacute;n se encuentra temporalmente fuera de servicio';
+class CoreController extends Controller {
 
     /**
-     * Contempla los errores de programación
-     * @param string $message
-     * @param integer $code Codigo de error
-     * @param \Exception $exception [Opcional] Excepcion anterior
+     * Sección de muestra de errores por defecto del framework
      */
-    public function __construct($message = NULL, $code = NULL, \Exception $exception = NULL) {
-        parent::__construct($message ? $message : $this->_message, $code ? $code : 500, [], $exception);
+    public function error() {
+        $error = $this->request->url(2);
+        $error_layout = Config::get('Error.layout');
+        $this->view->setLayout($error_layout ? $error_layout : 'error');
+        if ( in_array($error, [500, 404]) ) {
+            $this->response->defaultHeader($error);
+            $this->view->setTemplate( is_file(PO_PATH_TEMPLATES . DS . 'error' . DS . 'error-' . $error . '.phtml') ? 
+                    'error-' . $error : 'default', 'error');
+        } else {
+            $this->view->setTemplate('default', 'error');
+        }
     }
+
 }

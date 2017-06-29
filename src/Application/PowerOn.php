@@ -93,14 +93,16 @@ class PowerOn {
                 
                 $controller->registerContainer($this->_container);
                 $controller->{ $dispatcher->action }();
-
+                
                 $response->render( $view->getRenderedTemplate() );
 
             } catch (PowerOnException $e) {
                 if ( $this->_environment == self::DEVELOPMENT ) {
                     $this->handleDevError($e);
                 } else {
-                    throw new InternalErrorException($e->getMessage(), $e->getCode(), $e);
+                    $e->log( $this->_container['Logger'] );
+                    $message = $e instanceof \PowerOn\Exceptions\DevException ? 'Error interno' : $e->getMessage();
+                    throw new InternalErrorException($message, $e->getCode() ? $e->getCode() : NULL, $e);
                 }
             }
         } catch (InternalErrorException $e) {
@@ -136,13 +138,14 @@ class PowerOn {
      * @param PowerOnException $e
      */
     private function handleProdError(PowerOnException $e) {
-        $e->log( $this->_container['Logger'] );
         /* @var $response \PowerOn\Network\Response */
         $response = $this->_container['Response'];
-        if ( is_file(PO_PATH_TEMPLATES . DS . 'error' . DS . 'error-' . $e->getCode() . '.phtml') ) {
+        $path_errors = PO_PATH_TEMPLATES . DS . 'error';
+        if ( is_file($path_errors . DS . 'error-' . $e->getCode() . '.phtml') || is_file($path_errors . DS . 'default.phtml') ) {
             /* @var $view \PowerOn\View\View */
             $view = $this->_container['View'];
-            $view->setTemplate('error-' . $e->getCode(), 'error');
+            $view->setTemplate( is_file($path_errors . DS . 'error-' . $e->getCode() . '.phtml') ? 
+                    'error-' . $e->getCode() : 'default.phtml', 'error');
             $error_layout = Config::get('Error.layout');
             $view->setLayout($error_layout ? $error_layout : 'error');
             $view->set('exception', $e);

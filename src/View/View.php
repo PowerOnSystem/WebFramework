@@ -34,22 +34,22 @@ class View {
      * El contenido del template cargado
      * @var data 
      */
-    private $content;
+    private $_content;
     /**
      * El layout principal a cargar
      * @var string
      */
-    private $layout;
+    private $_layout;
     /**
      * Template a cargar
      * @var array
      */
-    private $template;
+    private $_template;
     /**
      * Datos cargados en la plantilla
      * @var array 
      */
-    private $data = [];
+    private $_data = [];
     /**
      * Helpers cargados
      * @var \Pimple\Container
@@ -133,32 +133,10 @@ class View {
      * @throws DevException
      */
     public function getRenderedTemplate() {
-        $view_file = $this->template['name'] . '.phtml';
-        $path = PO_PATH_TEMPLATES . DS . $this->template['folder'] . DS . $view_file;
+        $template = PO_PATH_TEMPLATES . DS . $this->_template['folder'] . DS . $this->_template['name'] . '.phtml';
+        $layout = $this->_layout ? PO_PATH_TEMPLATES . DS . 'layout' . DS . $this->_layout . '.phtml' : NULL;
         
-        if ( !is_file($path) ) {
-            throw new DevException(sprintf('No se encuentra la plantilla (%s) a cargar en (%s).', $this->template['name'], $path));
-        }
-        
-        ob_start();
-        try {
-            include $path;
-        } catch (\RuntimeException $e) {
-            ob_end_clean();
-            throw new DevException(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));
-            
-        }
-        $this->content = ob_get_clean();
-        
-
-        $path_layout = PO_PATH_TEMPLATES . DS . 'layout' . DS . ($this->layout ? $this->layout : 'default') . '.phtml';
-        if ( !is_file($path_layout) ) {
-            throw new DevException(sprintf('No se encuentra la plantilla principal (%s) a cargar en (%s).', $this->layout, $path_layout));
-        }
-
-        ob_start();
-        require_once $path_layout;
-        return ob_get_clean();
+        return $this->render($template, $layout);
     }
     
     /**
@@ -168,33 +146,100 @@ class View {
      * @return type
      * @throws DevException
      */
-    public function getCoreRenderedTemplate( $template, $layout = NULL ) {        
-        if ( !is_file(POWERON_ROOT . DS . $template) ) {
-            throw new DevException(sprintf('No se encuentra la plantilla core a cargar en (%s).', POWERON_ROOT . DS . $template));
+    public function getCoreRenderedTemplate( $template, $layout = NULL ) {
+        return $this->render(POWERON_ROOT . DS . $template, $layout ? POWERON_ROOT . DS . $layout : NULL);
+    }
+    
+    /**
+     * Renderiza y devuelve el contenido de la plantilla indicada
+     * @param string $template Ubicación fisica de la plantilla a cargar
+     * @param string $layout [Opcional] Ubicación física de la plantilla contenedora
+     * @return string Devuelve la plantilla renderizada
+     * @throws DevException
+     */
+    private function render($template, $layout) {
+        if ( !is_file($template) ) {
+            throw new DevException(sprintf('No se encuentra la plantilla cargar en (%s).', $template));
         }
         
-        ob_start();
+        if ( $layout && !is_file($layout) ) {
+            throw new DevException(sprintf('No se encuentra la plantilla principal a cargar en (%s).', $layout));
+        }
+
+        //Seguridad en caso de un error fatal de programación en las plantillas
+        ob_start(['PowerOn\View\View', 'handleBuffer']);
+        
         try {
-            include POWERON_ROOT . DS . $template;
+            include $template;
         } catch (RuntimeException $e) {
-            echo $e->getRenderedError();
+            if ( DEV_ENVIRONMENT ) {
+                /* @var $logger \Monolog\Logger */
+                $logger = $this->container['Logger'];
+                $logger->addDebug('Runtime Error: ' . $e->getMessage(), $e->getContext());
+                
+                echo $e->getRenderedError();
+            } else {
+                ob_end_clean();
+                throw new DevException(sprintf('Runtime Error: %s <br /><small> %s (%d)</small>', $e->getMessage(), $e->getFile(), $e->getLine()));
+            }
         }
-        $this->content = ob_get_clean();
+        $this->_content = ob_get_clean();
+        
+        if ( $layout ) {
+            ob_start();
+            require_once $layout;
+            return ob_get_clean();
+        }
+        
+        return $this->_content;
+    }
+    
+    /**
+     * Controla el flujo de una plantilla y procesa los errores en caso de encontrarlos
+     * @param string $buffer El flujo resultante
+     * @return string el flujo
+     */
+    public function handleBuffer($buffer) {
+        $error = error_get_last();
+        if ( $error && ($error["type"] == E_USER_ERROR || $error["type"] == E_ERROR) ) {
+            $matches = [];
+            preg_match('/\: (.*) in /', $error['message'], $matches);
+            $message = key_exists(1, $matches) ? $matches[1] : $error['message'];
+            
+            /* @var $response \PowerOn\Network\Response */
+            $response = $this->container['Response'];
+            
+            if ( DEV_ENVIRONMENT ) {
+                $response->setHeader(500);
+                return 
+                      '<header>'
+                        . '<h1>Error: ' . $message . '</h1>'
+                        . '<h2>' . $error['file'] . ' (' . $error['line'] . ')</h2>'
+                    . '</header>';
+            } else {
+                /* @var $logger \Monolog\Logger */
+                $logger = $this->container['Logger'];
+                $logger->error($message, [
+                    'type' => $error['type'],
+                    'file' => $error['file'],
+                    'line' => $error['line']
+                ]);
 
-        if ( $layout && !is_file(POWERON_ROOT . DS . $layout) ) {
-            throw new DevException(sprintf('No se encuentra la plantilla principal core  a cargar en (%s).', POWERON_ROOT . DS . $layout));
+                /* @var $router \AltoRouter */
+                $router = $this->container['AltoRouter'];
+
+                $response->redirect( $router->generate('poweron_error', ['error' => 500]) );
+            }
         }
 
-        ob_start();
-        require_once POWERON_ROOT . DS . $layout;
-        return ob_get_clean();
+        return $buffer;
     }
     
     /**
      * Libera todos los datos cargados en la plantilla
      */
     public function clearData() {
-        $this->data = NULL;
+        $this->_data = NULL;
     }
     
     /**
@@ -211,7 +256,7 @@ class View {
         if ( !is_file($path_layout) ) {
             throw new DevException(sprintf('No existe la plantilla principal (%s) en (%s).', $name, $path_layout));
         }
-        $this->layout = $name;
+        $this->_layout = $name;
     }
     
     /**
@@ -220,7 +265,7 @@ class View {
      * @param string $folder Carpeta del modulo contenedora (controller)
      */
     public function setTemplate($name = 'index', $folder = 'index') {
-        $this->template = ['name' => $name, 'folder' => $folder];
+        $this->_template = ['name' => $name, 'folder' => $folder];
     }
     
     /**
@@ -228,7 +273,7 @@ class View {
      * @return string El contenido de la plantilla cargada
      */
     public function content() {
-        return $this->content;
+        return $this->_content;
     }
     
     /**
@@ -240,7 +285,7 @@ class View {
             header('Content-Type: application/json');
         }
         
-        echo json_encode($this->data);
+        echo json_encode($this->_data);
     }
     
     /**
@@ -259,7 +304,7 @@ class View {
      * @param mix $value
      */
     public function __set($name, $value) {
-        $this->data[$name] = $value;
+        $this->_data[$name] = $value;
     }
     
     /**
@@ -268,8 +313,8 @@ class View {
      * @return mix
      */
     public function __get($name) {
-        if ( key_exists($name, $this->data) ){
-            return $this->data[$name];
+        if ( key_exists($name, $this->_data) ){
+            return $this->_data[$name];
         } else if ( $this->container->offsetExists($name) ) {
             return $this->container[$name];
         }

@@ -24,9 +24,9 @@ namespace PowerOn\Application;
  * @return string Devuelve una cadena con los datos serializados
  */
 function html_serialize(array $array) {
-    return implode(' ', array_map(function($v, $k) {
+    return implode(' ', array_filter(array_map(function($v, $k) {
         return $v !== NULL && (is_string($v) || is_numeric($v)) ? $k . '="' . $v . '"' : ''; 
-    }, $array, array_keys($array)));
+    }, $array, array_keys($array))));
 }
 
 /**
