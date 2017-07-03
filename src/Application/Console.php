@@ -16,17 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace PowerOn\Application;
+
 /**
  * Console consola con acciones del package
  * @version 0.1
  * @author Lucas
  */
 class Console {
+    
     /**
-     * Establece el entorno de trabajo en modo produccion al 
-     * solicitarlo como requisito en composer
+     * Copia todos los elementos de una carpeta en otra
+     * @param string $src Carpeta donde se encuentran los archivos a copiar
+     * @param string $dst Carpeta destino donde se van a copiar los archivos
      */
-    public static function postUpdate() {
-
+    protected static function recurseCopy($src, $dst) {
+        $dir = opendir($src);
+        if ( !is_dir($dst) && !mkdir($dst) ) {
+            
+        }
+        
+        while( ($file = readdir($dir)) !== FALSE ) {
+            if (( $file != '.' ) && ( $file != '..' )) { 
+                if ( is_dir($src . '/' . $file) ) { 
+                    self::recurseCopy($src . '/' . $file, $dst . '/' . $file); 
+                } else { 
+                    copy($src . '/' . $file,$dst . '/' . $file); 
+                }
+            }
+        }
+        closedir($dir); 
     }
 }
