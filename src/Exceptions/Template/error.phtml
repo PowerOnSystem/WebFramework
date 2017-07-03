@@ -29,10 +29,10 @@ $reflection = new ReflectionClass($exception);
 <?= $this->block->humaniceTrace($exception->getTrace()) ?>
 <?php if ( $exception->getContext() ) : ?>
 <h3> Context </h3>
-<?php k($exception->getContext()) ?>
+<?php d($exception->getContext()) ?>
 <?php endif ?>
 
 <?php if ( $exception->getPrevious() ) : ?>
 <h3> Previous Exception </h3>
-<?php k($exception->getPrevious()) ?>
+<?php d($exception->getPrevious()) ?>
 <?php endif ?>

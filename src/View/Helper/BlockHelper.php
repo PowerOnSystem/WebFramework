@@ -55,7 +55,7 @@ class BlockHelper extends Helper {
             $item .= $file ? ' - <span style="color:lightgray" onmouseover="this.style.color=\'gray\'" '
                     . 'onmouseout="this.style.color=\'lightgray\'" >' . $file . '</span>' : '';
             $item .= $line ? ' <span style="color:salmon">' . $line . '</span>' : '';
-            $item .= $args ? '<div style="display:none" id="args_' . $id_trace . '">' . k($args, KRUMO_RETURN) . '</div>' : '';
+            $item .= $args ? '<div style="display:none" id="args_' . $id_trace . '">' . @d($args) . '</div>' : '';
             
             $list[] = $item;
         }

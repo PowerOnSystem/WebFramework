@@ -201,7 +201,8 @@ class View {
      */
     public function handleBuffer($buffer) {
         $error = error_get_last();
-        if ( $error && ($error["type"] == E_USER_ERROR || $error["type"] == E_ERROR) ) {
+
+        if ( $error ) {
             $matches = [];
             preg_match('/\: (.*) in /', $error['message'], $matches);
             $message = key_exists(1, $matches) ? $matches[1] : $error['message'];
