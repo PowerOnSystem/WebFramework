@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0460d7e6116f1085d71b97e80a7270aa",
+    "content-hash": "387f53a1dca9a16670baedd7a78f8801",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -350,65 +350,62 @@
     ],
     "packages-dev": [
         {
-            "name": "mmucklo/krumo",
-            "version": "v0.5.7",
+            "name": "kint-php/kint",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mmucklo/krumo.git",
-                "reference": "133a5b2382ef8b9b2537f6049964c8d88c5e5ad1"
+                "url": "https://github.com/kint-php/kint.git",
+                "reference": "df63cec9406b44e10a316138ce47d8da7e9868d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmucklo/krumo/zipball/133a5b2382ef8b9b2537f6049964c8d88c5e5ad1",
-                "reference": "133a5b2382ef8b9b2537f6049964c8d88c5e5ad1",
+                "url": "https://api.github.com/repos/kint-php/kint/zipball/df63cec9406b44e10a316138ce47d8da7e9868d5",
+                "reference": "df63cec9406b44e10a316138ce47d8da7e9868d5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.17"
+                "php": ">=5.1.2"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "dev-master",
-                "phpmd/phpmd": "dev-master"
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "phpunit/phpunit": "^4.0",
+                "symfony/finder": "^2.6"
             },
             "type": "library",
             "autoload": {
                 "files": [
-                    "class.krumo.php"
+                    "init.php"
+                ],
+                "classmap": [
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Kaloyan K. Tsvetkov",
-                    "email": "kaloyan@kaloyan.info"
+                    "name": "Rokas Šleinius",
+                    "homepage": "https://github.com/raveren"
                 },
                 {
-                    "name": "Stefan Thomas",
-                    "email": "moon@justmoon.de"
+                    "name": "Jonathan Vollebregt",
+                    "homepage": "https://github.com/jnvsor"
                 },
                 {
-                    "name": "Matthew J. Mucklo",
-                    "email": "mmucklo@gmail.com"
-                },
-                {
-                    "name": "Scott Baker",
-                    "email": "scott@perturb.org"
+                    "name": "Contributors",
+                    "homepage": "https://github.com/kint-php/kint/graphs/contributors"
                 }
             ],
-            "description": "KRUMO - version 2.0 of print_r(); and var_dump(); (with new updates)",
+            "description": "Kint - debugging tool for PHP developers",
+            "homepage": "https://kint-php.github.io/kint/",
             "keywords": [
                 "debug",
-                "debugging",
-                "krumo",
-                "pretty",
-                "print",
-                "print_r",
-                "var_dump"
+                "kint",
+                "php"
             ],
-            "time": "2016-03-15T07:21:38+00:00"
+            "time": "2017-06-20T18:21:30+00:00"
         }
     ],
     "aliases": [],
