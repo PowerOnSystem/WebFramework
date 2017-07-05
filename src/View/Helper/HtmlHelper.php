@@ -134,7 +134,7 @@ class HtmlHelper extends Helper {
             'class' => ''
         ];
         
-        return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . html_serialize($cfg) . ' />' . PHP_EOL;
+        return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . html_serialize($cfg) . ' />';
     }
     
     /**
