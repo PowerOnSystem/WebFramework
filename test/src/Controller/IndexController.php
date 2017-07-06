@@ -29,6 +29,6 @@ use PowerOn\Controller\Controller;
 class IndexController extends Controller {
 
     public function index() {
-        $this->database;
+        
     }
 }

@@ -19,6 +19,59 @@
 namespace PowerOn\Application;
 
 /**
+ * Busca un valor especifico dentro de un array multidimensional
+ * @param array $array El array donde buscar
+ * @param string $key La columna donde buscar
+ * @param mix $search El parametro a buscar
+ * @return boolean
+ */
+function array_search_by_key(array $array, $key, $search) {
+    foreach($array as $index => $value) {
+        if (!is_array($value) || !key_exists($key, $value)) {
+            return FALSE;
+        }
+        if ( $value[$key] == $search ) {
+            return $index;
+        }
+    }
+    return FALSE;
+}
+/**
+ * Busca un valor especifico dentro de un array multidimensional
+ * @param array $array El array donde buscar
+ * @param string $key La columna donde buscar
+ * @param mix $search El parametro a buscar
+ * @return boolean
+ */
+function array_search_full(array $array, $search) {
+    $r = FALSE;
+    foreach ($array as $value) {
+        if ( is_array($value) ) {
+            if ( array_search_full($value, $search) ) {
+                return TRUE;
+            }
+        } else if ($r = $value == $search) {
+            return TRUE;
+        }
+    }
+    return $r;
+}
+
+/**
+ * Verifica si una cadena dada esta codificada en JSON
+ * @param string $string La cadena a verificar
+ * @return boolean
+ */
+function is_json($string) {
+    if ( $string && is_string($string) && !is_numeric($string) ) {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+    
+    return FALSE;
+}
+
+/**
  * Serializa un Array en formato html para una etiqueta key="value"
  * @param array $array El array a serializar
  * @return string Devuelve una cadena con los datos serializados
@@ -122,4 +175,15 @@ function crypt_blowfish($password, $digit = 7) {
  */
 function test_crypt($input, $saved) {
     return crypt($input, $saved) == $saved;
+}
+
+/**
+ * Crea una cadena tipo json escapando caracteres unicode
+ * @param array $struct El array a codificar
+ * @return string
+ */
+function json_encode_clean(array $struct) {
+   return preg_replace_callback("/\\\\u([a-f0-9]{4})/", function ($matches){
+       return iconv('UCS-4LE','UTF-8', pack('V', hexdec('U' . $matches[0])));
+   }, json_encode($struct));
 }
