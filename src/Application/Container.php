@@ -76,7 +76,17 @@ $container['View'] = function($c) {
 
 $container['Database'] = function () {
     if ( class_exists('\PowerOn\Database\Database') ) {
-        $db = new PowerOn\Database\Database();
+        $host = Config::get('DataBaseService.host');
+        $user = Config::get('DataBaseService.user');
+        $password = Config::get('DataBaseService.password');
+        $database = Config::get('DataBaseService.database');
+        $port = Config::get('DataBaseService.port');
+        try {
+            $service = new \PowerOn\Database\MySqlService($host, $user, $password, $database, $port);
+            $db = new \PowerOn\Database\Database();
+        } catch (\PowerOn\Database\DataBaseServiecException $e) {
+            throw new PowerOn\Exceptions\PowerOnException($e->getMessage());
+        }
         return $db;
     }
     
