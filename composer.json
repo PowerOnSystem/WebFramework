@@ -19,7 +19,8 @@
         "monolog/monolog": "^1.22",
         "altorouter/altorouter": "^1.2",
         "pimple/pimple": "^3.0",
-        "fightbulc/moment": "^1.26"
+        "fightbulc/moment": "^1.26",
+        "poweronsystem/utility": "dev-master"
     },
     "autoload": {
         "psr-4": {
