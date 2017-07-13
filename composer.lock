@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "387f53a1dca9a16670baedd7a78f8801",
+    "content-hash": "7725569aef0afcb1026cd72c06d6e0ef",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -63,16 +63,16 @@
         },
         {
             "name": "fightbulc/moment",
-            "version": "1.26.5",
+            "version": "1.26.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fightbulc/moment.php.git",
-                "reference": "cdd7e35a03d2fe13e8d050c9526eaeea241f9b0e"
+                "reference": "4f7d21fb3e35222def4f26599b2ea3af382c0a14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fightbulc/moment.php/zipball/cdd7e35a03d2fe13e8d050c9526eaeea241f9b0e",
-                "reference": "cdd7e35a03d2fe13e8d050c9526eaeea241f9b0e",
+                "url": "https://api.github.com/repos/fightbulc/moment.php/zipball/4f7d21fb3e35222def4f26599b2ea3af382c0a14",
+                "reference": "4f7d21fb3e35222def4f26599b2ea3af382c0a14",
                 "shasum": ""
             },
             "require": {
@@ -122,7 +122,7 @@
                 "translation",
                 "validate"
             ],
-            "time": "2017-05-15T09:09:18+00:00"
+            "time": "2017-07-11T17:51:37+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -256,25 +256,29 @@
         },
         {
             "name": "pimple/pimple",
-            "version": "v3.0.2",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silexphp/Pimple.git",
-                "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a"
+                "reference": "279b56046fb368deacf77e2f8f3bdcea45cc367a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/a30f7d6e57565a2e1a316e1baf2a483f788b258a",
-                "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a",
+                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/279b56046fb368deacf77e2f8f3bdcea45cc367a",
+                "reference": "279b56046fb368deacf77e2f8f3bdcea45cc367a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.3.0",
+                "psr/container": "^1.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "3.1.x-dev"
                 }
             },
             "autoload": {
@@ -298,7 +302,104 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2015-09-11T15:10:35+00:00"
+            "time": "2017-07-03T14:06:46+00:00"
+        },
+        {
+            "name": "poweronsystem/utility",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PowerOnSystem/Utility.git",
+                "reference": "e659d17a6abf396ea7a56c326ab1962085684eb2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PowerOnSystem/Utility/zipball/e659d17a6abf396ea7a56c326ab1962085684eb2",
+                "reference": "e659d17a6abf396ea7a56c326ab1962085684eb2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "kint-php/kint": "^2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PowerOn\\Utility\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "authors": [
+                {
+                    "name": "Lucas Sosa",
+                    "email": "sosalucas87@gmail.com",
+                    "homepage": "http://www.poweronsistemas.com.ar",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Utilities for php programmers.",
+            "homepage": "https://github.com/poweronsystem/utility",
+            "keywords": [
+                "array hash",
+                "inflector",
+                "string formatter",
+                "utilities"
+            ],
+            "time": "2017-07-07 18:50:23"
+        },
+        {
+            "name": "psr/container",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2017-02-14T16:28:37+00:00"
         },
         {
             "name": "psr/log",
@@ -351,16 +452,16 @@
     "packages-dev": [
         {
             "name": "kint-php/kint",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kint-php/kint.git",
-                "reference": "df63cec9406b44e10a316138ce47d8da7e9868d5"
+                "reference": "1a1104729f10277b06d7db742d3c98d1881d4d7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kint-php/kint/zipball/df63cec9406b44e10a316138ce47d8da7e9868d5",
-                "reference": "df63cec9406b44e10a316138ce47d8da7e9868d5",
+                "url": "https://api.github.com/repos/kint-php/kint/zipball/1a1104729f10277b06d7db742d3c98d1881d4d7e",
+                "reference": "1a1104729f10277b06d7db742d3c98d1881d4d7e",
                 "shasum": ""
             },
             "require": {
@@ -405,12 +506,14 @@
                 "kint",
                 "php"
             ],
-            "time": "2017-06-20T18:21:30+00:00"
+            "time": "2017-07-03T20:08:05+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "poweronsystem/utility": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

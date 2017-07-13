@@ -81,13 +81,20 @@ $container['Database'] = function () {
         $password = Config::get('DataBaseService.password');
         $database = Config::get('DataBaseService.database');
         $port = Config::get('DataBaseService.port');
+        
         try {
-            $service = new \PowerOn\Database\MySqlService($host, $user, $password, $database, $port);
-            $db = new \PowerOn\Database\Database();
-        } catch (\PowerOn\Database\DataBaseServiecException $e) {
-            throw new PowerOn\Exceptions\PowerOnException($e->getMessage());
+            //Creamos un servicio PDO para la base de datos MySQL con la clase que viene en la libreria
+            $service = new PDO(sprintf('mysql:host=%s;dbname=%s;port=%s', $host, $database, $port), $user, $password);
+            
+            //Creamos el controlador de la base de datos
+            $database = new PowerOn\Database\Database( $service );
+            
+        } catch (PDOException $e) {
+            throw new \PowerOn\Exceptions\DevException($e->getMessage(), 
+                    ['error_code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine()], $e);
         }
-        return $db;
+
+        return $database;
     }
     
     return NULL;
