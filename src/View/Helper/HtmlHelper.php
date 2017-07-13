@@ -18,6 +18,7 @@
  */
 
 namespace PowerOn\View\Helper;
+use PowerOn\Exceptions\RuntimeException;
 use function \PowerOn\Application\html_serialize;
 use function \PowerOn\Application\array_trim;
 
@@ -43,7 +44,11 @@ class HtmlHelper extends Helper {
      * @var array
      */
     private $_meta = [];
-    
+    /**
+     * Metalinks
+     * @var array
+     */
+    private $_metalink = [];
     /**
      * Crea un enlace
      * @param string $content el contenido del enlace
@@ -67,7 +72,34 @@ class HtmlHelper extends Helper {
         ] + $options;
         return '<a ' . html_serialize($cfg) . ' >' . $content . '</a>';
     }
+    
+    /**
+     * Crea un enlace a una dirección de mail, esta función ayuda a proteger el mail contra
+     * los robots de spam evitando que guarden la dirección mediante una función
+     * @param type $mail
+     * @param array $options
+     */
+    public function mailto($content, $mail, array $options = []) {
+        if ($content === $mail) {
+            throw new RuntimeException('El contenido no debe ser una direcci&oacute;n de email, pruebe "Contacteme"');
+        }
+        $data = explode('@', $mail);
         
+        $user = $data[0];
+        $server = key_exists(1, $data) ? explode('.', $data[1]) : [];
+        
+        $config = [
+            'onclick' => 'this.href=\'mailto:\' + \'' 
+                . $user . '\' + \'@\' + \'' 
+                . (key_exists(0, $server) ? $server[0] : '') . '\' + \'.\' + \''
+                . (key_exists(1, $server) ? $server[1] : '') . '\'',
+            'rel' => 'nofollow'
+        ] + $options;
+        
+        return $this->link($content, '', $config);
+    }
+
+
     /**
      * Agrega un archivo javascript o enlista los agregados
      * @param string $name [Opcional] el nombre del archivo si no se especifica name devuelve todos los archivos js incluidos
@@ -107,12 +139,28 @@ class HtmlHelper extends Helper {
     }
     
     /**
+     * Agrega un archivo css o enlista los agregados
+     * @param string $name [Opcional] el nombre del archivo si no se especifica name devuelve todos los archivos js incluidos
+     * @param boolean $external [Opcional] Especifica si se trata de un archivo JS externo.
+     * @return string una etiqueta link
+     */
+    public function metalink(array $options = []) {
+        if ( $options ) {
+            $this->_metalink[] = $options;
+        } else {
+            return implode(PHP_EOL, array_map(function($file) {
+                return '<link ' . html_serialize($file) . ' />';
+            }, $this->_metalink)) . PHP_EOL;
+        }
+    }
+    
+    /**
      * Agrega una etiqueta META
      * @param string $name Nombre/Tipo de etiqueta meta
      * @param string $content Contenido
      * @return string La etiqueta formateada
      */
-    public function meta($name, $content) {
+    public function meta($name = NULL, $content = NULL) {
         if ( $name ) {
             $this->_meta[$name] = ['name' => $name, 'content' => $content];
         } else {

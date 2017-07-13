@@ -250,7 +250,7 @@ class View {
      */
     public function setLayout($name) {
         if ( !$name ) {
-            return FALSE;
+            return 'default';
         }
         
         $path_layout = PO_PATH_TEMPLATES . DS . 'layout' . DS . $name . '.phtml';
