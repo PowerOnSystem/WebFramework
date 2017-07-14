@@ -19,7 +19,7 @@
 
 namespace PowerOn\View\Helper;
 use PowerOn\Form\Form;
-use function \PowerOn\Application\html_serialize;
+use PowerOn\Utility\Str;
 /**
  * Form
  * @author Lucas Sosa
@@ -121,7 +121,7 @@ class FormHelper extends Helper {
             'novalidate' => 'novalidate',
             'enctype' => 'multipart/form-data'
         ];
-        $r = '<form ' . html_serialize($options) . ' > ' . PHP_EOL;
+        $r = '<form ' . Str::htmlserialize($options) . ' > ' . PHP_EOL;
         $r .= '<input type = "hidden" name = "poweron_token" value = "' . $this->_csrf->get() . '" />' . PHP_EOL;
         
         return $r;
@@ -169,6 +169,6 @@ class FormHelper extends Helper {
      * @return string El campo renderizado en html
      */
     public function defaultRenderField($field) {
-        return '<input ' . html_serialize($field) . ' />';
+        return '<input ' . Str::htmlserialize($field) . ' />';
     }
 }

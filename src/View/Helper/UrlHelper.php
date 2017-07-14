@@ -18,7 +18,7 @@
  */
 
 namespace PowerOn\View\Helper;
-use function \PowerOn\Application\array_trim;
+use PowerOn\Utility\Arr;
 
 /**
  * UrlHelper
@@ -38,7 +38,7 @@ class UrlHelper extends Helper {
      */
     public function build( array $url = [], $name = NULL ) {
         if ($name) {
-            array_trim($url, 'generate');
+            Arr::trim($url, 'generate');
             return $this->_router->generate($name, $url);
         }
         
@@ -121,7 +121,7 @@ class UrlHelper extends Helper {
     public function push(array $push = []) {
         $query = [];
         if ( key_exists('query', $push) ) {
-            $query = array_trim($push, 'query');
+            $query = Arr::trim($push, 'query');
             array_walk($query, function(&$v, $k) {
                 $v = $k . '=' . $v;
             });

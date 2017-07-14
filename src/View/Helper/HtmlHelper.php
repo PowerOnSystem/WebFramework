@@ -19,8 +19,8 @@
 
 namespace PowerOn\View\Helper;
 use PowerOn\Exceptions\RuntimeException;
-use function \PowerOn\Application\html_serialize;
-use function \PowerOn\Application\array_trim;
+use PowerOn\Utility\Str;
+use PowerOn\Utility\Arr;
 
 /**
  * Ayudante de Html
@@ -65,12 +65,12 @@ class HtmlHelper extends Helper {
                         key_exists('add', $url) ? $url['add'] : [],
                         key_exists('remove', $url) ? $url['remove'] : []
                     ) : (
-                        key_exists('generate', $url) ? $this->url->build($url, array_trim($url, 'generate')) :
+                        key_exists('generate', $url) ? $this->url->build($url, Arr::trim($url, 'generate')) :
                             (key_exists('mailto', $url) ? 'mailto:' . $url['mailto'] : $this->url->build($url))
                     )
             )) : ( $this->url->routeExist($url) ? $this->url->build([], $url) : $url )
         ] + $options;
-        return '<a ' . html_serialize($cfg) . ' >' . $content . '</a>';
+        return '<a ' . Str::htmlserialize($cfg) . ' >' . $content . '</a>';
     }
     
     /**
@@ -113,7 +113,7 @@ class HtmlHelper extends Helper {
             ];
         } else {
             return implode(PHP_EOL, array_map(function($value) {
-                return '<script ' . html_serialize($value) . '></script>';
+                return '<script ' . Str::htmlserialize($value) . '></script>';
             }, $this->_js)) . PHP_EOL;
         }
     }
@@ -133,7 +133,7 @@ class HtmlHelper extends Helper {
             ];
         } else {
             return implode(PHP_EOL, array_map(function($file) {
-                return '<link ' . html_serialize($file) . ' />';
+                return '<link ' . Str::htmlserialize($file) . ' />';
             }, $this->_css)) . PHP_EOL;
         }
     }
@@ -149,7 +149,7 @@ class HtmlHelper extends Helper {
             $this->_metalink[] = $options;
         } else {
             return implode(PHP_EOL, array_map(function($file) {
-                return '<link ' . html_serialize($file) . ' />';
+                return '<link ' . Str::htmlserialize($file) . ' />';
             }, $this->_metalink)) . PHP_EOL;
         }
     }
@@ -182,7 +182,7 @@ class HtmlHelper extends Helper {
             'class' => ''
         ];
         
-        return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . html_serialize($cfg) . ' />';
+        return '<img src = "' . ($external ? $name : PO_PATH_IMG  . '/' . $name) . '" ' . Str::htmlserialize($cfg) . ' />';
     }
     
     /**
@@ -195,10 +195,10 @@ class HtmlHelper extends Helper {
      */
     public function nestedList(array $list, array $options = [], array $item_options = [], $type_list = 'list') {
         $type = $type_list == 'list' ? 'ul' : 'ol';
-        $r = '<' . $type . ' ' . html_serialize($options) . '>';
+        $r = '<' . $type . ' ' . Str::htmlserialize($options) . '>';
         foreach ($list as $key => $l) {
             $r .= is_array($l) ? $this->nestedList($l, key_exists($key, $item_options) ? $item_options[$key] : []) : 
-                '<li ' . (key_exists($key, $item_options) ? html_serialize($item_options[$key]) : '') . ' >' . 
+                '<li ' . (key_exists($key, $item_options) ? Str::htmlserialize($item_options[$key]) : '') . ' >' . 
                     $l . 
                 '</li>';
         }
