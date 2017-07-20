@@ -20,7 +20,7 @@
         "altorouter/altorouter": "^1.2",
         "pimple/pimple": "^3.0",
         "fightbulc/moment": "^1.26",
-        "poweronsystem/utility": "dev-master"
+        "poweronsystem/webutility": "^0.1.0"
     },
     "autoload": {
         "psr-4": {
