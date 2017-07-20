@@ -73,11 +73,17 @@ $container['View'] = function($c) {
 
 $container['Database'] = function () {
     if ( class_exists('\PowerOn\Database\Database') ) {
-        $host = Config::get('DataBaseService.host');
-        $user = Config::get('DataBaseService.user');
-        $password = Config::get('DataBaseService.password');
-        $database = Config::get('DataBaseService.database');
-        $port = Config::get('DataBaseService.port');
+        $host = \PowerOn\Utility\Config::get('DataBaseService.host');
+        $user = \PowerOn\Utility\Config::get('DataBaseService.user');
+        $password = \PowerOn\Utility\Config::get('DataBaseService.password');
+        $database = \PowerOn\Utility\Config::get('DataBaseService.database');
+        $port = \PowerOn\Utility\Config::get('DataBaseService.port');
+        
+        if ( !$host || !$database ) {
+            throw new \PowerOn\Exceptions\LogicException('Debe configurar la base de datos antes de utilizarla, '
+                    . 'vaya al archio de configuraci&oacute;n (generalmente ubicado en config/application.php) '
+                    . 'y agregue el valor "DataBaseService" al array de configuraci&oacute;n con sus respectivos par&aacute;metros.');
+        }
         
         try {
             //Creamos un servicio PDO para la base de datos MySQL con la clase que viene en la libreria

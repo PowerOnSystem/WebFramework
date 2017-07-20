@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "516e8f7bffefe0f78e781017717b68a1",
+    "content-hash": "b31d38c2b127d9fcfc55e6b939ccf2d4",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -240,6 +240,55 @@
                 "dependency injection"
             ],
             "time": "2017-07-17T17:05:21+00:00"
+        },
+        {
+            "name": "poweronsystem/helperservice",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PowerOnSystem/HelperService.git",
+                "reference": "cdf7d27d659dad9d3dd0e74a55333a8378101890"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PowerOnSystem/HelperService/zipball/cdf7d27d659dad9d3dd0e74a55333a8378101890",
+                "reference": "cdf7d27d659dad9d3dd0e74a55333a8378101890",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "pimple/pimple": "^3.0",
+                "poweronsystem/webutility": "^0.1.0"
+            },
+            "require-dev": {
+                "kint-php/kint": "^2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PowerOn\\Helper\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL"
+            ],
+            "authors": [
+                {
+                    "name": "Lucas Sosa",
+                    "email": "sosalucas87@gmail.com",
+                    "homepage": "http://www.poweronsistemas.com.ar",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Servicio de ayudantes en la escritura html.",
+            "homepage": "https://github.com/poweronsystem/helperservice",
+            "keywords": [
+                "helper",
+                "html easy",
+                "html writer"
+            ],
+            "time": "2017-07-20T16:34:50+00:00"
         },
         {
             "name": "poweronsystem/webutility",

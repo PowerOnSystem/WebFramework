@@ -112,6 +112,7 @@ class PowerOn {
                 //Renderizamos la respuesta luego de realizar el negocio
                 $response->render( $view->getRenderedTemplate() );
             } catch (PowerOnException $e) {
+                
                 $e->log( $this->_container['Logger'] );
                 
                 if ( $this->_environment == self::DEVELOPMENT ) {
@@ -120,6 +121,24 @@ class PowerOn {
                     $message = $e instanceof LogicException ? 'Error interno' : $e->getMessage();
                     throw new InternalErrorException($message, $e->getCode() ? $e->getCode() : NULL, $e);
                 }
+                
+            } catch (\Exception $e) {
+                
+                if ( $this->_environment == self::DEVELOPMENT ) {
+                    $this->handleExternalError($e);
+                } else {
+                    $reflection = new \ReflectionClass($e);
+                    $logger = $this->_container['Logger'];
+                    $logger->error($e->getMessage(), [
+                        'type' => $reflection->getShortName(),
+                        'code' => $e->getCode(),
+                        'line' => $e->getLine(),
+                        'file' => $e->getFile(),
+                        'trace' => $e->getTrace()
+                    ]);
+                    throw new InternalErrorException('Error interno', $e->getCode() ? $e->getCode() : NULL, $e);
+                }
+                
             }
         } catch (InternalErrorException $e) {
             $this->handleProdError($e);
@@ -194,5 +213,22 @@ class PowerOn {
 
         //Enviamos el renderizado a la respuesta.
         $response->render( $render, $e->getCode() );
+    }
+    
+    /**
+     * Renderiza un error externo al framework
+     * @param \Exception $e
+     */
+    private function handleExternalError(\Exception $e) {
+        $reflection = new \ReflectionClass($e);
+        echo '<header>';
+            echo '<h1>Exception: ' . $reflection->getName() . '</h1>';
+            echo '<h2>Message: ' . $e->getMessage() . '</h2>';
+        echo '</header>';
+        if ( method_exists($e, 'getContext') ) {
+            echo 'Debug:';
+            !d( $e->getContext() );
+        }
+        echo '<p>' . $e->getFile() . ':' . $e->getLine() . '</p>';
     }
 }

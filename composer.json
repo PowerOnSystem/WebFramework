@@ -19,7 +19,8 @@
         "monolog/monolog": "^1.22",
         "altorouter/altorouter": "^1.2",
         "pimple/pimple": "^3.0",
-        "poweronsystem/webutility": "^0.1.0"
+        "poweronsystem/webutility": "^0.1.0",
+        "poweronsystem/helperservice": "^0.1.0"
     },
     "autoload": {
         "psr-4": {
