@@ -20,7 +20,7 @@
 namespace PowerOn\Routing;
 
 use PowerOn\Utility\Inflector;
-use PowerOn\Exceptions\DevException;
+use PowerOn\Exceptions\LogicException;
 use PowerOn\Exceptions\NotFoundException;
 
 /**
@@ -73,7 +73,7 @@ class Dispatcher {
      * @param string $request_controller
      * @param string $request_action
      * @return \PowerOn\Controller\Controller
-     * @throws DevException
+     * @throws LogicException
      */
     public function force($request_controller, $request_action = 'index') {
         $this->controller = $request_controller;
@@ -82,13 +82,13 @@ class Dispatcher {
         $handler = $this->loadController();
         
         if ( !$handler ) {
-            throw new DevException(sprintf('No se existe la clase del controlador (%s)', $this->controller));
+            throw new LogicException(sprintf('No se existe la clase del controlador (%s)', $this->controller));
         }
         
         if ( !method_exists($handler, $this->action) ) {
             $reflection = new \ReflectionClass($handler);
 
-            throw new DevException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
+            throw new LogicException(sprintf('No existe el m&eacute;todo (%s) del controlador (%s)', 
                     $this->action, $reflection->getName()), ['controller' => $handler]);
         }
         

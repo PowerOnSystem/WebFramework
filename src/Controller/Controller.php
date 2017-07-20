@@ -18,7 +18,7 @@
  */
 
 namespace PowerOn\Controller;
-use PowerOn\Exceptions\DevException;
+use PowerOn\Exceptions\LogicException;
 
 /**
  * Controlador avanzado con más herramientas
@@ -49,7 +49,7 @@ class Controller {
         if ( $this->_container->offsetExists($object_name) ) {
             $object = $this->_container[$object_name];
             if ( !$object ) {
-                throw new DevException(sprintf('El m&oacute;dulo (%s) solicitado no fue instalado.', $object_name));
+                throw new LogicException(sprintf('El m&oacute;dulo (%s) solicitado no fue instalado.', $object_name));
             }
             return $object;
         }

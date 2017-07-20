@@ -33,6 +33,7 @@ class CoreController extends Controller {
         $error = $this->request->url(2);
         $error_layout = Config::get('Error.layout');
         $this->view->setLayout($error_layout ? $error_layout : 'error');
+        
         if ( in_array($error, [500, 404]) ) {
             $this->response->defaultHeader($error);
             $this->view->setTemplate( is_file(PO_PATH_TEMPLATES . DS . 'error' . DS . 'error-' . $error . '.phtml') ? 

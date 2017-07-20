@@ -19,11 +19,11 @@
 namespace PowerOn\Exceptions;
 
 /**
- * DevException Controla los errores causados por errores de programación
+ * DevException Controla los errores de programación
  * @author Lucas Sosa
  * @version 0.1
  */
-class DevException extends PowerOnException {
+class LogicException extends PowerOnException {
     
     /**
      * Contempla los errores de programación

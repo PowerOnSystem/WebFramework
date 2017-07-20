@@ -63,14 +63,11 @@ $container['CSRFProtection'] = function($c) {
 $container['View'] = function($c) {
     $view_file = PO_PATH_VIEW . DS . 'AppView.php';
     if ( !is_file($view_file) ) {
-        $view = new PowerOn\View\View();
+        $view = new PowerOn\View\View($c);
     } else {
         include_once $view_file;
-        $view = new \App\View\AppView();
+        $view = new \App\View\AppView($c);
     }
-    
-    $view->buildHelpers($c);
-    
     return $view;
 };
 
@@ -90,7 +87,7 @@ $container['Database'] = function () {
             $database = new PowerOn\Database\Database( $service );
             
         } catch (PDOException $e) {
-            throw new \PowerOn\Exceptions\DevException($e->getMessage(), 
+            throw new \PowerOn\Exceptions\LogicException($e->getMessage(), 
                     ['error_code' => $e->getCode(), 'file' => $e->getFile(), 'line' => $e->getLine()], $e);
         }
 

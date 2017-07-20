@@ -1,0 +1,32 @@
+[20-Jul-2017 18:12:52 UTC] PHP Fatal error:  Uncaught Error: Call to a member function view() on null in C:\wamp64\www\webframework\test\src\View\Template\index\index.phtml:20
+Stack trace:
+#0 C:\wamp64\www\webframework\src\View\View.php(114): include()
+#1 C:\wamp64\www\webframework\src\View\View.php(82): PowerOn\View\View->render('C:\\wamp64\\www\\w...', NULL)
+#2 C:\wamp64\www\webframework\src\Application\PowerOn.php(97): PowerOn\View\View->getRenderedTemplate()
+#3 C:\wamp64\www\webframework\src\Application\Bootstrap.php(40): PowerOn\Application\PowerOn->run('prod')
+#4 C:\wamp64\www\webframework\vendor\composer\autoload_real.php(66): require('C:\\wamp64\\www\\w...')
+#5 C:\wamp64\www\webframework\vendor\composer\autoload_real.php(56): composerRequire14c73b26b1e9ae6bd391415574ae73c4('03431d66c4d7c9e...', 'C:\\wamp64\\www\\w...')
+#6 C:\wamp64\www\webframework\vendor\autoload.php(7): ComposerAutoloaderInit14c73b26b1e9ae6bd391415574ae73c4::getLoader()
+#7 C:\wamp64\www\webframework\test\webroot\index.php(13): require('C:\\wamp64\\www\\w...')
+#8 {main}
+  throw in C:\wamp64\www\webframework\test\src\View\Template\index\index.phtml on line 20
+[20-Jul-2017 18:15:20 UTC] PHP Notice:  Use of undefined constant kike - assumed 'kike' in C:\wamp64\www\webframework\test\src\View\Template\index\index.phtml on line 20
+[20-Jul-2017 18:15:20 UTC] PHP Stack trace:
+[20-Jul-2017 18:15:20 UTC] PHP   1. {main}() C:\wamp64\www\webframework\test\webroot\index.php:0
+[20-Jul-2017 18:15:20 UTC] PHP   2. require() C:\wamp64\www\webframework\test\webroot\index.php:13
+[20-Jul-2017 18:15:20 UTC] PHP   3. ComposerAutoloaderInit14c73b26b1e9ae6bd391415574ae73c4::getLoader() C:\wamp64\www\webframework\vendor\autoload.php:7
+[20-Jul-2017 18:15:20 UTC] PHP   4. composerRequire14c73b26b1e9ae6bd391415574ae73c4() C:\wamp64\www\webframework\vendor\composer\autoload_real.php:56
+[20-Jul-2017 18:15:20 UTC] PHP   5. require() C:\wamp64\www\webframework\vendor\composer\autoload_real.php:66
+[20-Jul-2017 18:15:20 UTC] PHP   6. PowerOn\Application\PowerOn->run() C:\wamp64\www\webframework\src\Application\Bootstrap.php:40
+[20-Jul-2017 18:15:20 UTC] PHP   7. PowerOn\View\View->getRenderedTemplate() C:\wamp64\www\webframework\src\Application\PowerOn.php:97
+[20-Jul-2017 18:15:20 UTC] PHP   8. PowerOn\View\View->render() C:\wamp64\www\webframework\src\View\View.php:82
+[20-Jul-2017 18:15:20 UTC] PHP   9. include() C:\wamp64\www\webframework\src\View\View.php:114
+[20-Jul-2017 18:31:27 UTC] PHP Fatal error:  Uncaught Exception: Runtime Error: Esta mal configurada una variable <br /><small> C:\wamp64\www\webframework\test\src\View\Template\index\index.phtml (24)</small> in C:\wamp64\www\webframework\src\View\View.php:124
+Stack trace:
+#0 C:\wamp64\www\webframework\src\View\View.php(82): PowerOn\View\View->render('C:\\wamp64\\www\\w...', NULL)
+#1 C:\wamp64\www\webframework\src\Application\PowerOn.php(97): PowerOn\View\View->getRenderedTemplate()
+#2 C:\wamp64\www\webframework\src\Application\Bootstrap.php(40): PowerOn\Application\PowerOn->run('prod')
+#3 C:\wamp64\www\webframework\vendor\composer\autoload_real.php(66): require('C:\\wamp64\\www\\w...')
+#4 C:\wamp64\www\webframework\vendor\composer\autoload_real.php(56): composerRequire14c73b26b1e9ae6bd391415574ae73c4('03431d66c4d7c9e...', 'C:\\wamp64\\www\\w...')
+#5 C:\wamp64\www\webframework\vendor\autoload.php(7): ComposerAutoloaderInit14c73b26b1e9ae6bd391415574ae73c4::getLoader()
+#6 C:\wamp64\www\webframework\test\webroot\index.php(13): require('C:\\wamp64\\www\\w.. in C:\wamp64\www\webframework\src\View\View.php on line 124

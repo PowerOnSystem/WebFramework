@@ -17,7 +17,7 @@
  */
 namespace PowerOn\Application;
 
-use PowerOn\Exceptions\DevException;
+use PowerOn\Exceptions\LogicException;
 use PowerOn\Application\PowerOn;
 
 //Archivo de configuración de la aplicación
@@ -26,7 +26,7 @@ $config_file = PO_PATH_CONFIG . DS . 'application.php';
 if ( is_file($config_file) ) {
     $config = include $config_file;
     if ( !is_array($config) ) {
-        throw new DevException(sprintf('El archivo (%s) debe retornar un array', $file), ['return' => $config]);
+        throw new LogicException(sprintf('El archivo (%s) debe retornar un array', $file), ['return' => $config]);
     }
 }
 
@@ -79,7 +79,7 @@ try {
             $view->initialize();
             
             $dispatcher->handle();
-        } catch (DevException $d) {
+        } catch (LogicException $d) {
             if ( DEV_ENVIRONMENT ) {
                 echo '<h1>' . $d->getMessage() . '</h1>';
                 echo '<h4>' . $d->getFile() . ' ('. $d->getLine() . ')</h4>';

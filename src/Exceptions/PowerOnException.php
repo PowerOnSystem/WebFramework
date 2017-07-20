@@ -29,7 +29,15 @@ class PowerOnException extends \Exception {
      * @var array 
      */
     private $_context;
+    /**
+     * Descripción del problema
+     * @var string
+     */
     protected $_description;
+    /**
+     * Ayuda rápida del problema
+     * @var string
+     */
     protected $_help;
 
 

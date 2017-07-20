@@ -19,7 +19,7 @@
 
 namespace PowerOn\Network;
 
-use PowerOn\Exceptions\DevException;
+use PowerOn\Exceptions\LogicException;
 
 /**
  * Response
@@ -167,7 +167,7 @@ class Response {
     * Da formato a una respuesta.
     * 
     * @param mix $response La respuesta a formatear, puede ser un array con los valores body, headers y status o un string con el body
-    * @throws DevException
+    * @throws LogicException
     * @return array
     */
     private function _parse($response) {
@@ -182,7 +182,7 @@ class Response {
             $defaults['body'] = $response;
             $response = $defaults;
         } else {
-            throw new DevException('La respuesta no puede ser nula.', ['response' => $response]);
+            throw new LogicException('La respuesta no puede ser nula.', ['response' => $response]);
         }
         
         return $response;

@@ -19,6 +19,7 @@
 
 namespace PowerOn\Application;
 
+use PowerOn\Exceptions\LogicException;
 use PowerOn\Exceptions\PowerOnException;
 use PowerOn\Exceptions\InternalErrorException;
 use PowerOn\Utility\Config;
@@ -83,25 +84,40 @@ class PowerOn {
         
         try {
             try {
+                //Obtenemos el View del container
                 /* @var $view \PowerOn\View\View */
-                $view = $this->_container['View'];                
+                $view = $this->_container['View'];
+                
+                //El dispatcher entrega el controlador en caso de que lo encuentre utilizando AltoRouter
                 $controller = $dispatcher->handle( $this->_container['AltoRouter'], $request );
-
-                $view->setLayout(Config::get('View.layout'));
+                
+                //Obtenemos el layout de la aplicación desde la configuración
+                $layout = Config::get('View.layout');
+                
+                //Establecemos el layout obtenido, si no fue especificado se utilizará el default.phtml
+                $view->setLayout($layout ? $layout : 'default');
+                
+                //Establecemos el template a utilizar por el controlador seleccionado
                 $view->setTemplate($dispatcher->action, $dispatcher->controller);
+                
+                //Inicializamos el View cargando los helpers predefinidos y demás operaciones
                 $view->initialize();
                 
+                //Registramos el container en el controlador cargado
                 $controller->registerContainer($this->_container);
+                
+                //Lanzamos la acción capturada por el dispatcher y altorouter
                 $controller->{ $dispatcher->action }();
                 
+                //Renderizamos la respuesta luego de realizar el negocio
                 $response->render( $view->getRenderedTemplate() );
-
             } catch (PowerOnException $e) {
+                $e->log( $this->_container['Logger'] );
+                
                 if ( $this->_environment == self::DEVELOPMENT ) {
                     $this->handleDevError($e);
                 } else {
-                    $e->log( $this->_container['Logger'] );
-                    $message = $e instanceof \PowerOn\Exceptions\DevException ? 'Error interno' : $e->getMessage();
+                    $message = $e instanceof LogicException ? 'Error interno' : $e->getMessage();
                     throw new InternalErrorException($message, $e->getCode() ? $e->getCode() : NULL, $e);
                 }
             }
@@ -115,20 +131,25 @@ class PowerOn {
      * @param PowerOnException $e
      */
     private function handleDevError(PowerOnException $e) {
-        $e->log( $this->_container['Logger'] );
-        
+        //Obtenemos el Response del contenedor
         /* @var $response \PowerOn\Network\Response */
         $response = $this->_container['Response'];
         
+        //Obtenemos el View a trabajar del contenedor
         /* @var $view \PowerOn\View\View */
         $view = $this->_container['View'];
-
+        
+        //Guardamos la excepción a ser tratada en una variabla llamada exception
         $view->set('exception', $e);
         
+        //Renderizamos la respuesta otorgada por el View
         $response->render( 
             $view->getCoreRenderedTemplate(
-                'Exceptions' . DS . 'Template' . DS . 'error.phtml',
-                'Exceptions' . DS . 'Template' . DS . 'layout.phtml'
+                //Plantilla core de error en modo desarrollo
+                'Template' . DS . 'Error' . DS . 'default.phtml',
+                
+                //Plantilla layout general para el modo desarrollo
+                'Template' . DS . 'Layout' . DS . 'layout.phtml'
             ), $e->getCode() 
         );
     }
@@ -138,22 +159,40 @@ class PowerOn {
      * @param PowerOnException $e
      */
     private function handleProdError(PowerOnException $e) {
+        //Obtenemos el Response del contenedor
         /* @var $response \PowerOn\Network\Response */
         $response = $this->_container['Response'];
+        
+        //Establecemos la ruta donde se encuentran las plantillas de error
         $path_errors = PO_PATH_TEMPLATES . DS . 'error';
+        
+        //Verificamos si existe una plantlla predefinida para este error con el siguiente formato "error-{ codigo_error }.phtml"
         if ( is_file($path_errors . DS . 'error-' . $e->getCode() . '.phtml') || is_file($path_errors . DS . 'default.phtml') ) {
+            //Si existe una plantilla para este error obtenemos el View del contenedor
             /* @var $view \PowerOn\View\View */
             $view = $this->_container['View'];
+            
+            //Establecemos la plantilla encontrada
             $view->setTemplate( is_file($path_errors . DS . 'error-' . $e->getCode() . '.phtml') ? 
                     'error-' . $e->getCode() : 'default.phtml', 'error');
+            
+            //Obtenemos el layout del error según la configuración de la aplicación
             $error_layout = Config::get('Error.layout');
-            $view->setLayout($error_layout ? $error_layout : 'error');
+            
+            //Establecemos el layout configurado en caso de que exista.
+            $view->setLayout($error_layout);
+            
+            //Guardamos en una variable la excepcion obtenida
             $view->set('exception', $e);
+            
+            //Renderizamos la plantilla y guardamos el resultado para mostrarlo luego
             $render = $view->getRenderedTemplate();
         } else {
+            //Si no existe una plantilla predefinida para este error se utiliza el renderizado universal de la excepción
             $render = $e->getRenderedError();
         }
 
+        //Enviamos el renderizado a la respuesta.
         $response->render( $render, $e->getCode() );
     }
 }
