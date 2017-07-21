@@ -29,14 +29,16 @@ defined('DEV_ENVIRONMENT') ?: define('DEV_ENVIRONMENT', FALSE);
 
 //Si no esta definida la carpeta raiz de la aplicación
 defined('PO_PATH_APP') ?: define('PO_PATH_APP', ROOT);
+
+/**
+ * Subdirectorio donde se va a acceder a la web
+ */
+defined('PO_PATH_ROOT') ?: define('PO_PATH_ROOT', NULL);
+
 /**
  * Archivos Log
  */
 define('PO_PATH_LOGS', PO_PATH_APP . DS . 'logs');
-/**
- * Subdirectorio donde se va a acceder a la web
- */
-define('PO_PATH_ROOT', NULL);
 /**
  * Lenguajes
  */
