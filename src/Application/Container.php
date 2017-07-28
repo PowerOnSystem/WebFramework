@@ -103,4 +103,29 @@ $container['Database'] = function () {
     return NULL;
 };
 
+$container['Authorization'] = function($c) {
+    if ( class_exists('\PowerOn\Authorization\Authorization') ) {
+        $db = $c['Database'];
+        $config = [ 
+            'db_pdo' => $db->service(),
+            'login_email_mode' => PowerOn\Utility\Config::get('AuthorizationService.login_email_mode'),
+            'login_error_max_chances' => PowerOn\Utility\Config::get('AuthorizationService.login_error_max_chances'),
+            'login_error_wait_time' => PowerOn\Utility\Config::get('AuthorizationService.login_error_wait_time'),
+            'login_check_ban' => PowerOn\Utility\Config::get('AuthorizationService.login_check_ban'),
+            'login_session_time' => PowerOn\Utility\Config::get('AuthorizationService.login_session_time'),
+            'password_min_length' => PowerOn\Utility\Config::get('AuthorizationService.password_min_length'),
+            'password_max_length' => PowerOn\Utility\Config::get('AuthorizationService.password_max_length'),
+            'username_min_length' => PowerOn\Utility\Config::get('AuthorizationService.username_min_length'),
+            'username_max_length' => PowerOn\Utility\Config::get('AuthorizationService.username_max_length'),
+            'access_level_min_val' => PowerOn\Utility\Config::get('AuthorizationService.access_level_min_val'),
+            'access_level_max_val' => PowerOn\Utility\Config::get('AuthorizationService.access_level_max_val'),
+        ];
+        
+        
+        return new \PowerOn\Authorization\Authorization( array_filter($config) );
+    }
+    
+    return NULL;
+};
+
 return $container;
