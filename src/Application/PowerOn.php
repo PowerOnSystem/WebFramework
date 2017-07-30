@@ -71,6 +71,12 @@ class PowerOn {
      * @param type $environment Entorno a trabajar
      */
     public function run( $environment ) {
+        $application = NULL;
+        if ( class_exists('\App\Application') ) {
+            $application = new \App\Application( $this->_container );
+            $application->initialize();
+        }
+        
         $this->_environment = $environment === self::DEVELOPMENT ? self::DEVELOPMENT : self::PRODUCTION;
         
         /* @var $dispatcher \PowerOn\Routing\Dispatcher */
@@ -88,8 +94,14 @@ class PowerOn {
                 /* @var $view \PowerOn\View\View */
                 $view = $this->_container['View'];
                 
+                //Lanzamos el metodo beforeDispatch de la clase application solo si existe
+                !$application ?: $application->beforeDispatch();
+                
                 //El dispatcher entrega el controlador en caso de que lo encuentre utilizando AltoRouter
                 $controller = $dispatcher->handle( $this->_container['AltoRouter'], $request );
+                
+                //Lanzamos el metodo afterDispatch de la clase application solo si existe
+                !$application ?: $application->afterDispatch();
                 
                 //Obtenemos el layout de la aplicación desde la configuración
                 $layout = Config::get('View.layout');
@@ -109,8 +121,14 @@ class PowerOn {
                 //Lanzamos la acción capturada por el dispatcher y altorouter
                 $controller->{ $dispatcher->action }();
                 
+                //Lanzamos el metodo beforeRender de la clase application solo si existe
+                !$application ?: $application->beforeRender();
+                
                 //Renderizamos la respuesta luego de realizar el negocio
                 $response->render( $view->getRenderedTemplate() );
+                
+                //Lanzamos el metodo afterRender de la clase application solo si existe
+                !$application ?: $application->afterRender();
             } catch (PowerOnException $e) {
                 
                 $e->log( $this->_container['Logger'] );
@@ -224,11 +242,11 @@ class PowerOn {
         echo '<header>';
             echo '<h1>Exception: ' . $reflection->getName() . '</h1>';
             echo '<h2>Message: ' . $e->getMessage() . '</h2>';
+            echo '<h3>' . $e->getFile() . ':' . $e->getLine() . '</h3>';
         echo '</header>';
         if ( method_exists($e, 'getContext') ) {
             echo 'Debug:';
             !d( $e->getContext() );
         }
-        echo '<p>' . $e->getFile() . ':' . $e->getLine() . '</p>';
     }
 }

@@ -25,6 +25,7 @@ define('PO_START_TIME', microtime(TRUE));
 //Archivo de configuración de la aplicación
 $config = [];
 $config_file = PO_PATH_CONFIG . DS . 'application.php';
+
 if ( is_file($config_file) ) {
     $config = include $config_file;
     if ( !is_array($config) ) {

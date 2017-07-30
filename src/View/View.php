@@ -46,16 +46,16 @@ class View {
      */
     private $_data = [];
     /**
-     * Contenedor con las clases del framework
-     * @var \Pimple\Container
-     */
-    private $_container;
-    /**
      * Manager de helpers del framework
      * @var \PowerOn\Helper\HelperManager
      */
-    private $_helpers;
-
+    protected $_helpers;
+    /**
+     * Contenedor con las clases del framework
+     * @var \Pimple\Container
+     */
+    protected $_container;
+    
     /**
      * Constructor del view del framework
      * @param \Pimple\Container $container
@@ -143,7 +143,7 @@ class View {
      * @param string $buffer El flujo resultante
      * @return string el flujo
      */
-    public function handleBuffer($buffer) {
+    private function handleBuffer($buffer) {
         $error = error_get_last();
 
         if ( $error ) {
